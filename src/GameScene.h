@@ -5,10 +5,11 @@
 #if _WIN32
 #include <CGFscene.h>
 #include <CGFaxis.h>
+#include <CGFlight.h>
 #endif
 //end
 
-#include "Cube.h"
+#include "Board.h"
 
 class GameScene : public CGFscene{
 
@@ -19,6 +20,8 @@ public:
 	~GameScene();
 protected:
 
+	Board *board;
+	CGFlight *light0,*light1;
 	//Primitive::Cube *cube;
 };
 
