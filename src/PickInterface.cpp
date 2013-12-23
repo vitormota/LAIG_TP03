@@ -1,3 +1,9 @@
+#if _WIN32
+#include <GL\glew.h>
+#include <GL\glui.h>
+#endif
+
+
 #include "PickInterface.h"
 #include "PickScene.h"
 #include "CGFapplication.h"

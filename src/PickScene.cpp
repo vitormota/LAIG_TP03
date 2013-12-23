@@ -1,11 +1,17 @@
-#include "PickScene.h"
-#include "CGFaxis.h"
-#include "CGFapplication.h"
+#if _WIN32
+#include <GL\glew.h>
+#include <GL\glui.h>
+#endif
 
-#include "ExampleObject.h"
+#include "CGFaxis.h"
+#include "CGFappearance.h"
+
+#include "Primitive.h"
+#include "PickScene.h"
+
 #include <math.h>
 
-#include "CGFappearance.h"
+
 
 #define NUM_OBJS 25
 #define NUM_ROWS 9
@@ -31,8 +37,8 @@ void PickScene::init()
 	glNormal3f(0,0,1);
 
 	//obj=new ExampleObject();
-    p = new scene::Cylinder("1", 2.0, 2.0, 1.0, 10, 10);
-    tile = new BoardTile("1");
+	p = new scene::Cylinder("",2.0, 2.0, 1.0, 10, 10);
+	tile = new BoardTile("1");
 	materialAppearance=new CGFappearance();
 }
 
@@ -66,8 +72,8 @@ void PickScene::display()
 	materialAppearance->apply();
 
 	// scale down a bit
-    glTranslated(NUM_COLS-2+0.2, 0.0, -NUM_COLS);
-    glRotatef(90,0,0,1);
+	glTranslated(NUM_COLS-2+0.2, 0.0, -NUM_COLS);
+	glRotatef(90,0,0,1);
 	glScalef(0.2, 0.2, 0.2);
 
 	// picking example, the important parts are the gl*Name functions
@@ -84,8 +90,8 @@ void PickScene::display()
 		glTranslatef(i*NUM_ROWS,0,0);
 		glLoadName(i);		//replaces the value on top of the name stack
 		//obj->draw();
-        p->draw();
-        tile->draw();
+		p->draw();
+		tile->draw();
 		glPopMatrix();
 	}
 	glPopMatrix();
@@ -101,22 +107,22 @@ void PickScene::display()
 			glPushMatrix();
 			glTranslatef(0,0,(c+1)*NUM_ROWS);
 			glRotatef(90,0,1,0);
-            
-            // TODO adicionar aqui
-            
-        /*
-         if(FAZER PICK A PEÇA) então => glPushName só da peça
-                                        draw da peça
-                                        glPopName
-         else
-         if(FAZER PICK AO TILE) então => glPushName só do tile
-                                         draw do tile
-                                         glPopName
-         */
+			
+			// TODO adicionar aqui
+			
+		/*
+		 if(FAZER PICK A PEÇA) então => glPushName só da peça
+										draw da peça
+										glPopName
+		 else
+		 if(FAZER PICK AO TILE) então => glPushName só do tile
+										 draw do tile
+										 glPopName
+		 */
 			glPushName(c);
 			//obj->draw();
-            p->draw();
-            tile->draw();
+			p->draw();
+			tile->draw();
 			glPopName();
 			glPopMatrix();
 		}
@@ -133,7 +139,7 @@ PickScene::~PickScene()
 {
 	delete(materialAppearance);
 	delete(obj);
-    delete(p);
-    delete(tile);
+	delete(p);
+	delete(tile);
 	delete(light0);
 }

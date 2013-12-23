@@ -26,7 +26,7 @@ void Board::drawAllCells(){
 Cell::Cell(int x,int y){
 	posx = x;
 	posy = y;
-	plane = new Plane(50,1.0);
+	plane = new scene::Plane("",50);
 }
 
 Cell::~Cell(){
@@ -47,7 +47,7 @@ void Cell::draw(){
 	glTranslatef(posx -4,0.20,posy-4);
 	glLoadName(posy);
 	glPushName(posx);
-	plane->draw(1,1);
+	plane->draw();
 	glPopName();
 	glPopMatrix();
 }

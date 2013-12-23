@@ -16,7 +16,7 @@ BoardTile::BoardTile() {
 
 BoardTile::BoardTile(string id) {
     this->id = id;
-    this->r = new scene::Rectangle(id,-5, -5, 5, 5);
+    this->r = new scene::Rectangle("",-5, -5, 5, 5);
 }
 
 BoardTile::~BoardTile() {
@@ -33,7 +33,7 @@ string BoardTile::getId()
 }
 void BoardTile::draw()
 {
-    r->scene::Rectangle::draw();
+    r->Rectangle::draw();
 }
 
 

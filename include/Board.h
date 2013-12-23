@@ -18,7 +18,7 @@ public:
 
 protected:
 	Cell *tray[81];
-	Plane *sides[4];
+	scene::Plane *sides[4];
 
 private: 
 	void drawAllCells();
@@ -33,7 +33,7 @@ public:
 
 protected:
 	bool selected,piece;
-	Plane *plane;
+	scene::Plane *plane;
 	int posx,posy;
 };
 

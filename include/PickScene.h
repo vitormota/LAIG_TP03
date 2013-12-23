@@ -16,8 +16,8 @@ public:
 private:
 	CGFlight* light0;
 	CGFobject* obj;
-    scene::Primitive* p;
-    BoardTile* tile;
+	scene::Primitive* p;
+	BoardTile* tile;
 	CGFappearance* materialAppearance;
 };
 
