@@ -24,36 +24,44 @@
 using namespace std;
 
 //------- DECLARATIONS
-PickScene ps;
+PickScene *ps;
 PConnect *con;
+PickInterface pi;
 //------- END DEC'S
 
 int main(int argc, char* argv[]) {
 	
 	CGFapplication app = CGFapplication();
 
+	ps = new PickScene();
+
 	try {
 
 		con = new PConnect();
-		con->socket_connect();
+		ps->con = con;
+		
+		if(!con->socket_connect()){
+			throw exception();
+		}
 
 		app.init(&argc, argv);
-		
-		app.setScene(&ps);
-		app.setInterface(new PickInterface());
-		
+		app.setScene(ps);
+		app.setInterface(&pi);
 		app.run();
 	}
 	catch(GLexception& ex) {
 		con->quit();
 		cout << "Erro: " << ex.what();
+		cin.get();
 		return -1;
 	}
 	catch(exception& ex) {
 		con->quit();
 		cout << "Erro inesperado: " << ex.what();
+		cin.get();
 		return -1;
 	}
 	
+	con->quit();
 	return 0;
 }

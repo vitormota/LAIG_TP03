@@ -5,7 +5,7 @@
 using namespace std;
 
 PConnect::PConnect():connected(false){
-	this->port = 60070;
+	this->port = 60072;
 	this->address = "127.0.0.1";
 }
 
@@ -146,5 +146,5 @@ string PConnect::parse_board(char *ans,int pos){
 
 	board[j] = '\0';
 
-	return board;
+	return string(board);
 }
