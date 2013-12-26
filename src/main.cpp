@@ -12,6 +12,14 @@
 #endif
 //end
 
+//MAC OSX specific includes
+#ifdef __APPLE__
+#include <GL/glew.h>
+#include <GL/glui.h>
+#include "CGFapplication.h"
+#endif
+//end
+
 //general includes (c++ standard)
 #include <iostream>
 
@@ -37,12 +45,12 @@ int main(int argc, char* argv[]) {
 
 	try {
 
-		con = new PConnect();
+		/*con = new PConnect();
 		ps->con = con;
 		
 		if(!con->socket_connect()){
 			throw exception();
-		}
+		}*/
 
 		app.init(&argc, argv);
 		app.setScene(ps);

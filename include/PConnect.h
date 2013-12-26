@@ -5,6 +5,15 @@
 #include <WinSock2.h>
 #endif
 
+#ifdef __APPLE__
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+#endif
+
 #include <string>
 
 class PConnect{
@@ -13,7 +22,7 @@ public:
 
 	PConnect();
 	~PConnect();
-	
+
 	bool socket_connect();
 	bool play(int xi, int yi, int xf, int yf, std::string board, std::string &newBoard);
 
@@ -26,8 +35,12 @@ protected:
 	int port;
 	char* address;
 	bool connected;
+#ifdef _WIN32
 	SOCKET opened_socket;
-
+#else
+    int fd;
+    struct sockaddr_in server_addr;
+#endif
 	void send_message(char *msg, int len);
 	void receive_message(char *msg);
 
@@ -35,4 +48,4 @@ protected:
 	std::string parse_board(char *ans,int pos);
 };
 
-#endif 
+#endif

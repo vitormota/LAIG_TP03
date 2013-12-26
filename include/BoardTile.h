@@ -16,15 +16,16 @@ using std::string;
 class BoardTile
 {
 private:
-    string id;
-    scene::Rectangle* r;
+    Rectangle* r;
+    int xPos, yPos;
     
 public:
     BoardTile();
-    BoardTile(string id);
     ~BoardTile();
-    void setId(string id);
-    string getId();
+    void setXPos(int x);
+    void setYPos(int y);
+    int getXPos();
+    int getYPos();
     void draw();
 };
 

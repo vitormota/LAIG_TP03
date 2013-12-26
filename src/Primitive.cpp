@@ -6,8 +6,6 @@
 #include "Primitive.h"
 #include "math.h"
 
-namespace scene {
-
     // DECLARACOES RELACIONADAS COM OS "EVALUATORS"
     //   atenção à ordem dos pontos que nao e' circular...
     // Coordenadas dos 4 pontos de controlo (podem ser entendidas como
@@ -40,36 +38,7 @@ namespace scene {
         { 0.1, 0.1, 0.1, 0},
         { 0.2, 0.2, 0.2, 0},
         { 0.3, 0.3, 0.3, 0} };
-    
-    GLfloat vehicleControlPointsArray[9][3] = {
-        {0.5, 0.0, 0.5},
-        {0.0, 0.0, 0.5},
-        {-0.5, 0.0, 0.5},
-        
-        {0.5, 1.0, 0.0},
-        {0.0, 1.0, 0.0},
-        {-0.5, 1.0, 0.0},
-        
-        {0.5, 0.0, -0.5},
-        {0.0, 0.0, -0.5},
-        {-0.5, 0.0, -0.5}
-    };
-    
-    /*GLfloat vehicleControlPointsArray[9][3] = {
-        //0.0f,   0.0f, 0.0f,    //center
-        //-0.5f,   1.0f, 0.0f,    // left top
-        0.5f,   1.0f, 0.0f,    // right top
-        1.0f,   0.0f, 0.0f,    // right
-        0.5f,   -1.0f, 0.0f,    // right bottom
-        -0.5f,  -1.0f, 0.0f,    // left bottom
-        -1.0f,   0.0f, 0.0f,     // left
-        -0.5f,   1.0f, 0.0f,    // left top
-        0.0f,   0.0f, 0.0f,    //center
-        0.0f,   0.0f, 0.0f,    //center
-    };*/
 
-    
-    
     Primitive::Primitive() {
         
     }
@@ -313,34 +282,10 @@ namespace scene {
         return this->controlPoints;
     }
     
-    Vehicle::Vehicle(string id) : Primitive(id)
-    {
-        this->vehicleControlPoints = vector<vector<float>>();
-        vector<float> controlPoint;
-        
-        /** control points when the order is 2 */
-        
-        for (int i = 0; i < 9; i++)
-        {
-            controlPoint = vector<float>();
-            for (int k = 0; k < 3; k++)
-            {
-                controlPoint.push_back(vehicleControlPointsArray[i][k]);
-            }
-            
-            vehicleControlPoints.push_back(controlPoint);
-            controlPoint.clear();
-        }
-        
-        
-        plane1 = new Patch("", 3, 10, 10, "fill", vehicleControlPoints);
-    }
-    
     void Rectangle::draw() {
         
         glBegin(GL_QUADS);
         
-        //glNormal3f(0,0,1);
         glNormal3f(normalRectangle[0], normalRectangle[1], normalRectangle[2]);
         
         glTexCoord2f(0, 0);
@@ -588,19 +533,8 @@ namespace scene {
         
     }
     
-    void Vehicle::draw() {
-        plane1->draw();
-        
-    }
-    
-    
     Plane::~Plane()
     {
-    }
-    
-    Vehicle::~Vehicle()
-    {
-        delete(plane1);
     }
     
     float *Primitive::get_normal_newell(float **vertices, int size) {
@@ -628,5 +562,4 @@ namespace scene {
         return normal;
     }
     
-}
 

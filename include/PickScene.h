@@ -5,10 +5,11 @@
 #include "Primitive.h"
 #include "BoardTile.h"
 #include "PickInterface.h"
-#include "Cell.h"
 #include "PConnect.h"
+#include "Piece.h"
 #include <string.h>
 #include <stack>
+#include <vector>
 
 class PickScene : public CGFscene
 {
@@ -21,15 +22,18 @@ public:
 	void initBoard();
 	void startCon();
 
-	Cell **cells;
 	PConnect *con;
 
 	string board;
+    vector<Piece*> boardPieces;
+    vector<BoardTile*> boardTiles;
+    
+    bool pickPiece; // true if picking is active for pieces
+    bool pickBoardTile; // true if picking is active for board tiles
 
 private:
 	CGFlight* light0;
 	CGFobject* obj;
-	scene::Primitive* p;
 	BoardTile* tile;
 	CGFappearance* materialAppearance;
 	stack<std::string> *game_states;

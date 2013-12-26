@@ -15,6 +15,8 @@ Piece::Piece():CGFobject(){
 	this->radius_2 = radius/2;
 	this->height=1;
 	player = '-';
+    this->xPos = 0;
+    this->yPos = 0;
 }
 
 Piece::Piece(int slices,int stacks,float radius):CGFobject(){
@@ -27,6 +29,8 @@ Piece::Piece(int slices,int stacks,float radius):CGFobject(){
 	quad = gluNewQuadric();
 	gluQuadricNormals(quad, GLU_SMOOTH);
 	player = '-';
+    this->xPos = 0;
+    this->yPos = 0;
 }
 
 Piece::~Piece(){
@@ -36,12 +40,15 @@ Piece::~Piece(){
 }
 
 void Piece::draw(){
-
-	//text->apply();
-
+    
+    //text->apply();
+    glPushMatrix();
+    glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
+    glRotatef(90,1,0,0);
+    glRotatef(180,0,1,0);
+    
 	glPushMatrix();{
-		glTranslatef(0,elevation,0.0);
-		glRotatef(-90,1,0,0);
+		glTranslatef(0,elevation,0);
 		gluCylinder(quad,radius,radius_2,height,slices,stacks);
 		glTranslatef(0,0.0,1.0);
 		gluCylinder(quad,radius_2,radius_2,height,slices,stacks);
@@ -51,8 +58,8 @@ void Piece::draw(){
 	glPopMatrix();
 
 	drawBase();
-
-
+    
+    glPopMatrix();
 
 }
 
@@ -72,4 +79,24 @@ void Piece::drawBase(){
 		}glEnd();
 
 	}glPopMatrix();
+}
+
+void Piece::setXPos(int x)
+{
+    this->xPos = x;
+}
+
+void Piece::setYPos(int y)
+{
+    this->yPos = y;
+}
+
+int Piece::getXPos()
+{
+    return this->xPos;
+}
+
+int Piece::getYPos()
+{
+    return this->yPos;
 }

@@ -10,7 +10,14 @@ PConnect::PConnect():connected(false){
 }
 
 PConnect::~PConnect(){
+
+#ifdef _WIN32
 	if(connect) quit();
+#else
+    if(connected){
+        close(fd);
+    }
+#endif
 }
 
 void PConnect::quit()
@@ -23,9 +30,13 @@ void PConnect::quit()
 	char ans[128];
 	receive_message(ans);
 	connected = false;
+#ifndef _WIN32
+    close(fd);
+#endif
 }
 
 bool PConnect::socket_connect(){
+#ifdef _WIN32
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 	if (iResult != NO_ERROR)
@@ -64,17 +75,60 @@ bool PConnect::socket_connect(){
 	printf("Connected\n");
 	connected= true;
 	return true;
+#else
+    bzero((char*)&server_addr,sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr(this->address);
+    server_addr.sin_port = htons(this->port);
+    fd= socket(AF_INET, SOCK_STREAM, 0);
+    if(fd<0){
+      printf("ERROR Creating socket\n");
+      exit(-1);
+    }
+    if(connect(fd,(struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
+
+        this->connected=false;
+       printf("Connection error\n");
+       exit(-1);
+     }else{
+        this->connected=true;
+         printf("Client: connect() is ok\n");
+         return true;
+     }
+    return false;
+
+
+#endif
 
 }
 
 
 void PConnect::send_message(char *msg, int len){
+#ifndef _WIN32
+    size_t sent=write(this->fd, msg, len);
+    if(sent==0 && len!=0){
+		printf("Client: send() error .\n" );
+    }
+#else
 	int bytesSent = send(opened_socket, msg, len, 0);
 	if(bytesSent == SOCKET_ERROR)
 		printf("Client: send() error %ld.\n", WSAGetLastError());
+#endif
 }
 
 void PConnect::receive_message(char *msg) {
+#ifndef _WIN32
+    int pos=0;
+    char c;
+    while(read(fd,&c,1)>0){
+        if(c=='\n'){
+            break;
+        }
+        msg[pos]=c;
+        pos++;
+    }
+    msg[pos]=0;
+#else
 	int bytesRecv = SOCKET_ERROR;
 	int pos = 0;
 	while (true) {
@@ -84,6 +138,7 @@ void PConnect::receive_message(char *msg) {
 		pos++;
 	}
 	msg[pos] = 0;
+#endif
 }
 
 bool PConnect::play(int xi, int yi, int xf, int yf, string board, string &newBoard)
@@ -119,7 +174,7 @@ string PConnect::get_init_board(){
 
 	char ans[350];
 	receive_message(ans);
-	
+
 	//Verifica se resposta valida
 
 	if( !validAnswer(ans) )
@@ -142,7 +197,7 @@ string PConnect::parse_board(char *ans,int pos){
 	unsigned int j=0;
 	for(unsigned int i=pos; i < strlen(ans) -3; i++,j++)
 		board[j]=ans[i];
-	
+
 
 	board[j] = '\0';
 
