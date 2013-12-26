@@ -69,6 +69,7 @@ void Piece::drawBase(){
 	float x, z;
 	glPushMatrix();{
 		glTranslatef(0,elevation,0);
+        glRotatef(90,1,0,0);
 		glBegin(GL_POLYGON);{
 			for(int i = 0; i < this->slices ;i++){
 				angle += angle_step;

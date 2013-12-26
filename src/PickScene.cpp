@@ -8,6 +8,7 @@
 
 #include "Primitive.h"
 #include "PickScene.h"
+#include "Animation.h"
 
 #include <math.h>
 
@@ -51,6 +52,56 @@ void PickScene::init()
     
 	//request server init board and parse it
 	initBoard();
+    
+    // Initialize update period and previousTime
+    setUpdatePeriod(100);
+    previousTime = 0;
+    
+    animatePiece = false;
+    
+    // animate chosen piece (chose coordinates on the board of it)
+    int x = 8;
+    int y = 4;
+    
+    // final coordinates
+    int xFinal = 8;
+    int yFinal = 6;
+    anim = new Animation(x, y, xFinal, yFinal, glutGet( GLUT_ELAPSED_TIME ));
+    
+}
+
+void PickScene::update(unsigned long time)
+{
+    if(previousTime == 0)
+    {
+        previousTime = time;
+    }
+    else
+    {
+        unsigned long passedTime = time - previousTime;
+        previousTime = time;
+        animatePiece = true;
+        
+        if(animatePiece == true)
+        {
+            // animate chosen piece (chose coordinates on the board of it)
+            int x = 8;
+            int y = 4;
+            
+            // find piece with the position on the board x,y
+            for(unsigned int i = 0; i < boardPieces.size(); i++)
+            {
+                p = boardPieces[i];
+                // if it is the chosen piece
+                if((p->getXPos() == x) && (p->getYPos() == y))
+                {
+                    anim->animate(passedTime);
+                    boardPieces[i]->setXPos(anim->currentXPos);
+                    boardPieces[i]->setYPos(anim->currentZPos);
+                }
+            }
+        }
+    }
     
 }
 

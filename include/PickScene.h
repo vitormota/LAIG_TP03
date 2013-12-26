@@ -7,6 +7,7 @@
 #include "PickInterface.h"
 #include "PConnect.h"
 #include "Piece.h"
+#include "Animation.h"
 #include <string.h>
 #include <stack>
 #include <vector>
@@ -27,6 +28,13 @@ public:
 	string board;
     vector<Piece*> boardPieces;
     vector<BoardTile*> boardTiles;
+    
+    Animation* anim;
+    float previousTime;
+    void update(unsigned long time);
+    
+    Piece* p;
+    bool animatePiece;
     
     bool pickPiece; // true if picking is active for pieces
     bool pickBoardTile; // true if picking is active for board tiles

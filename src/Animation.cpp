@@ -17,13 +17,13 @@ Animation::Animation(float ixPos, float iyPos, float fxPos, float fyPos, float t
     this->initTime = time;
     
     // Displacement in x and z axis
-    float dx = fxPos - ixPos;
-    float dz = fyPos - iyPos;
+    float dx = (fxPos/*9/3-13.5+1.5*/) - (ixPos/*9/3-13.5+1.5*/);
+    float dz = (fyPos/*9/3-13.5+1.5*/) - (iyPos/*9/3-13.5+1.5*/);
     
     this->velocityX = dx;
     this->velocityY = 0;
     this->velocityZ = dz;
-    this->movementSpeed = 0.5;
+    this->movementSpeed = 0.0001;
 }
 
 void Animation::animate(float currentTime)
@@ -32,21 +32,23 @@ void Animation::animate(float currentTime)
     
     // Time displacement -> time passed
     float dt = currentTime - this->initTime;
-    
+
     // Calculate current position
-    this->currentXPos = ixPos + movementSpeed * velocityX * dt;
+    this->currentXPos = ixPos/*9/3-13.5+1.5*/ + movementSpeed * velocityX * dt;
     this->currentYPos = 0;
-    this->currentZPos = iyPos + movementSpeed * velocityZ * dt;
+    this->currentZPos = iyPos/*9/3-13.5+1.5*/ + movementSpeed * velocityZ * dt;
     
     // Check if the animation has ended
-    if(((this->currentXPos < fxPos) && (velocityX < 0)) || ((currentXPos > fxPos) && (velocityX > 0)))
+    if(((this->currentXPos < (fxPos/*9/3-13.5+1.5*/)) && (velocityX < 0))
+       || ((currentXPos > (fxPos/*9/3-13.5+1.5*/)) && (velocityX > 0)))
     {
-        currentXPos = fxPos;
+        currentXPos = fxPos/*9/3-13.5+1.5*/;
         this->animationActive = false;
     }
-    else if(((this->currentZPos < fyPos) && (velocityZ < 0)) || ((velocityZ > 0) && (currentZPos > fyPos)))
+    else if(((this->currentZPos < (fyPos/*9/3-13.5+1.5*/)) && (velocityZ < 0))
+            || ((velocityZ > 0) && (currentZPos > (fyPos/*9/3-13.5+1.5*/))))
     {
-        currentZPos = fyPos;
+        currentZPos = fyPos/*9/3-13.5+1.5*/;
         this->animationActive = false;
     }
 
