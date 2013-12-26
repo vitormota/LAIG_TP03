@@ -34,7 +34,7 @@ using namespace std;
 //------- DECLARATIONS
 PickScene *ps;
 PConnect *con;
-PickInterface pi;
+PickInterface *pi;
 //------- END DEC'S
 
 int main(int argc, char* argv[]) {
@@ -42,19 +42,22 @@ int main(int argc, char* argv[]) {
 	CGFapplication app = CGFapplication();
 
 	ps = new PickScene();
+	pi = new PickInterface(ps);
 
 	try {
 
-		/*con = new PConnect();
+#if _WIN32
+
+		con = new PConnect();
 		ps->con = con;
-		
 		if(!con->socket_connect()){
 			throw exception();
-		}*/
+		}
+#endif
 
 		app.init(&argc, argv);
 		app.setScene(ps);
-		app.setInterface(&pi);
+		app.setInterface(pi);
 		app.run();
 	}
 	catch(GLexception& ex) {

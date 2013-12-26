@@ -5,7 +5,7 @@
 #include <math.h>
 #define _RAD_TO_DEG M_PI / 180.0
 
-Piece::Piece():CGFobject(){
+Piece::Piece():CGFobject(),exists(true){
 	elevation = 0.0;
 	quad = gluNewQuadric();
 	gluQuadricNormals(quad, GLU_SMOOTH);
@@ -15,11 +15,13 @@ Piece::Piece():CGFobject(){
 	this->radius_2 = radius/2;
 	this->height=1;
 	player = '-';
-    this->xPos = 0;
-    this->yPos = 0;
+	this->xPos = 0;
+	this->yPos = 0;
+	this->king = false;
+	id = new char[4];
 }
 
-Piece::Piece(int slices,int stacks,float radius):CGFobject(){
+Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
 	elevation = 0.0;
 	this->slices = slices;
 	this->stacks= stacks;
@@ -29,26 +31,39 @@ Piece::Piece(int slices,int stacks,float radius):CGFobject(){
 	quad = gluNewQuadric();
 	gluQuadricNormals(quad, GLU_SMOOTH);
 	player = '-';
-    this->xPos = 0;
-    this->yPos = 0;
+	this->xPos = 0;
+	this->yPos = 0;
+	this->king = false;
+	id = new char[4];
 }
 
 Piece::~Piece(){
 	delete(app);
 	delete(text);
+	delete(id);
 	gluDeleteQuadric(quad);
 }
 
+void Piece::elevate(){
+	elevation=1.0;
+}
+
+void Piece::un_elevate(){
+	elevation=0.0;
+}
+
 void Piece::draw(){
-    
-    //text->apply();
-    glPushMatrix();
-    glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
-    glRotatef(90,1,0,0);
-    glRotatef(180,0,1,0);
-    
+	if(!exists) return;
+	//text->apply();
+	glPushMatrix();
+	glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
+	glRotatef(90,1,0,0);
+	glRotatef(180,0,1,0);
+	
 	glPushMatrix();{
-		glTranslatef(0,elevation,0);
+		//missing some push and pop somewhere so +y is +z
+		glTranslatef(0,0,elevation);
+		//elevation=0;
 		gluCylinder(quad,radius,radius_2,height,slices,stacks);
 		glTranslatef(0,0.0,1.0);
 		gluCylinder(quad,radius_2,radius_2,height,slices,stacks);
@@ -58,8 +73,8 @@ void Piece::draw(){
 	glPopMatrix();
 
 	drawBase();
-    
-    glPopMatrix();
+	
+	glPopMatrix();
 
 }
 
@@ -69,7 +84,7 @@ void Piece::drawBase(){
 	float x, z;
 	glPushMatrix();{
 		glTranslatef(0,elevation,0);
-        glRotatef(90,1,0,0);
+		glRotatef(90,1,0,0);
 		glBegin(GL_POLYGON);{
 			for(int i = 0; i < this->slices ;i++){
 				angle += angle_step;
@@ -84,20 +99,20 @@ void Piece::drawBase(){
 
 void Piece::setXPos(int x)
 {
-    this->xPos = x;
+	this->xPos = x;
 }
 
 void Piece::setYPos(int y)
 {
-    this->yPos = y;
+	this->yPos = y;
 }
 
 int Piece::getXPos()
 {
-    return this->xPos;
+	return this->xPos;
 }
 
 int Piece::getYPos()
 {
-    return this->yPos;
+	return this->yPos;
 }

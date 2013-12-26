@@ -4,7 +4,6 @@
 #include "CGFscene.h"
 #include "Primitive.h"
 #include "BoardTile.h"
-#include "PickInterface.h"
 #include "PConnect.h"
 #include "Piece.h"
 #include "Animation.h"
@@ -12,9 +11,28 @@
 #include <stack>
 #include <vector>
 
+class Pair{
+public:
+	int x;
+	int y;
+
+	Pair():x(0),y(0){;}
+	Pair(int x,int y):x(x),y(y){;}
+
+	bool operator==(const Pair& a) const{
+		return (x == a.x && y == a.y);
+	}
+	bool operator<(const Pair& cord) const{
+		if (x == cord.x)
+			return y < cord.y;
+		return x < cord.x;
+	}
+	
+};
+
 class PickScene : public CGFscene
 {
-	friend PickInterface;
+
 public:
 	void init();
 	void display();
@@ -25,19 +43,29 @@ public:
 
 	PConnect *con;
 
+	Piece *selected_piece;
+
 	string board;
-    vector<Piece*> boardPieces;
-    vector<BoardTile*> boardTiles;
-    
-    Animation* anim;
-    float previousTime;
-    void update(unsigned long time);
-    
-    Piece* p;
-    bool animatePiece;
-    
-    bool pickPiece; // true if picking is active for pieces
-    bool pickBoardTile; // true if picking is active for board tiles
+	vector<Piece*> boardPieces;
+	vector<BoardTile*> boardTiles;
+	
+	Animation* anim;
+	float previousTime;
+	void update(unsigned long time);
+	
+	Piece* p;
+	bool animatePiece;
+	
+	bool pickPiece; // true if picking is active for pieces
+	bool pickBoardTile; // true if picking is active for board tiles
+
+	std::map<Pair,int> positions;
+
+	bool movePiece(int xi, int yi,int xf,int yf);
+
+	bool elevatePiece(int x,int y);
+	bool un_elevatePiece();
+	bool emptySpace(int x,int y);
 
 private:
 	CGFlight* light0;
@@ -45,6 +73,15 @@ private:
 	BoardTile* tile;
 	CGFappearance* materialAppearance;
 	stack<std::string> *game_states;
+
+	void changePlayer();
+
+	/*
+	Called after a sucessfull move, checks if piece was remove (on plog) and if so remove it from board.
+	*/
+	void check_pieces();
+
+	char player;
 
 };
 

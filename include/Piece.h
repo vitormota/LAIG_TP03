@@ -5,6 +5,8 @@
 	Defines a simple game piece
 */
 
+#include <map>
+
 #if _WIN32
 #include <CGFobject.h>
 #include <CGFappearance.h>
@@ -20,6 +22,7 @@
 //end
 
 
+
 class Piece : public CGFobject{
 
 public:
@@ -27,27 +30,38 @@ public:
 	Piece();
 	Piece(int slices,int stacks,float radius);
 	~Piece();
-    void setXPos(int x);
-    void setYPos(int y);
-    int getXPos();
-    int getYPos();
+	void setXPos(int x);
+	void setYPos(int y);
+	int getXPos();
+	int getYPos();
 	
 	void draw();
 	char player;
 
-	float elevation,radius,radius_2,height;
+	bool king;
+	float radius,radius_2,height;
 	int slices,stacks;
 	CGFappearance *app;
 	CGFtexture *text;
 	GLUquadric *quad;
-    
+
+	void elevate();
+	void un_elevate();
+	
+	bool exists;
+	char *id;
+	int xPos, yPos;
+	
 private:
-    int xPos, yPos;
+	
 
 protected:
 
 	void drawBase();
+	float elevation;
 
 };
+
+
 
 #endif

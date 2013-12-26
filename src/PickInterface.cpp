@@ -5,12 +5,21 @@
 
 
 #include "PickInterface.h"
-#include "PickScene.h"
 #include "CGFapplication.h"
 
 // buffer to be used to store the hits during picking
 #define BUFSIZE 256
 GLuint selectBuf[BUFSIZE];
+
+PickInterface::PickInterface(PickScene *ps){
+	this->ps = ps;
+	x1 = 0;
+	x2 = 0;
+	y1 = 0;
+	y2 = 0;
+	pos1 = false;
+	pos2 = false;
+}
 
 void PickInterface::processMouse(int button, int state, int x, int y) 
 {
@@ -99,6 +108,36 @@ void PickInterface::processHits (GLint hits, GLuint buffer[])
 		// this should be replaced by code handling the picked object's ID's (stored in "selected"), 
 		// possibly invoking a method on the scene class and passing "selected" and "nselected"
 		printf("Picked ID's: ");
+
+		if(!pos1){
+			x1 = selected[1];
+			y1 = selected[0];
+			if(ps->elevatePiece(x1,y1)){
+				//sucess found piece at location
+				pos1 = true;
+				printf("Piece elevated.\n");
+			}else{
+				//no piece there sorry
+				printf("No piece at target location.\n");
+			}
+		}else if(pos1){
+			x2 = selected[1];
+			y2 = selected[0];
+			if(ps->emptySpace(x2,y2)){
+				//attempt move
+				if(ps->movePiece(x1,y1,x2,y2)){
+					//move was a success, clear all
+					pos1=false;
+				}
+			}else{
+				//piece found on loc 2 so
+				ps->un_elevatePiece();
+				ps->elevatePiece(x2,y2);
+			}
+
+			
+		}
+
 		for (int i=0; i<nselected; i++)
 			printf("%d ",selected[i]);
 		printf("\n");
