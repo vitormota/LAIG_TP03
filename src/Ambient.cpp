@@ -11,10 +11,8 @@
 Ambient::Ambient(string id)
 {
     this->id = id;
-    //wall = new Rectangle("wall", -20, -20, 20, 20);
-    wall = new Plane("wall",10);
     
-    wallApp = new CGFappearance();
+    skyApp = new CGFappearance();
     kApp = new CGFappearance();
     sApp = new CGFappearance();
     mApp = new CGFappearance();
@@ -24,7 +22,7 @@ Ambient::Ambient(string id)
     tileMApp = new CGFappearance();
     
     // sets texture's wrap
-    wallApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
+    skyApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
     kApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
     sApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
     mApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
@@ -33,19 +31,33 @@ Ambient::Ambient(string id)
     tileSApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
     tileMApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
     
+    // sky
+    sphereQuadric = gluNewQuadric();
+    gluQuadricDrawStyle(sphereQuadric, GLU_FILL);
+    gluQuadricNormals(sphereQuadric, GLU_SMOOTH);
+    gluQuadricOrientation(sphereQuadric, GLU_INSIDE);
+    gluQuadricTexture(sphereQuadric, GL_TRUE);
+    
 }
 
 Ambient::~Ambient()
 {
-    delete(wall);
+    delete(skyApp);
+    delete(kApp);
+    delete(sApp);
+    delete(mApp);
+    delete(tileGApp);
+    delete(tileKApp);
+    delete(tileSApp);
+    delete(tileMApp);
 }
 
-void Ambient::setTextures(string kingTexture, string sTexture, string mTexture, string wallsTexture, string gTileText, string sTileText, string mTileText, string kTileText)
+void Ambient::setTextures(string kingTexture, string sTexture, string mTexture, string skyTexture, string gTileText, string sTileText, string mTileText, string kTileText)
 {
     this->kingTexture = kingTexture;
     this->sTexture = sTexture;
     this->mTexture = mTexture;
-    this->wallsTexture = wallsTexture;
+    this->skyTexture = skyTexture;
     this->gTileText = gTileText;
     this->sTileText = sTileText;
     this->mTileText = mTileText;
@@ -72,7 +84,7 @@ int Ambient::getPiecesType()
 void Ambient::apply()
 {
     // Apply current textures
-    wallApp->setTexture(wallsTexture);
+    skyApp->setTexture(skyTexture);
     kApp->setTexture(kingTexture);
     sApp->setTexture(sTexture);
     mApp->setTexture(mTexture);
@@ -82,18 +94,14 @@ void Ambient::apply()
     tileMApp->setTexture(mTileText);
 }
 
-void Ambient::drawWalls()
+void Ambient::drawSky()
 {
-    // Right wall
-    glPushMatrix();
-    //glTranslated(15, 0, 15);
-    wallApp->apply();
-    wall->draw();
     
-    //glTranslated(0, 0, 15);
-    //glRotated(180, 0, 1, 0);
-    // Left Wall
-    wall->draw();
+    glPushMatrix();
+    skyApp->apply();
+    glScaled(5, 5, 5);
+    glRotated(90, 1, 0, 0);
+    gluSphere(sphereQuadric, 10, 10, 10);
     glPopMatrix();
     
 }

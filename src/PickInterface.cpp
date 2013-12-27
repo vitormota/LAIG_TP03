@@ -21,6 +21,15 @@ PickInterface::PickInterface(PickScene *ps){
 	pos2 = false;
     ambientID = 0;
     modeID = 0;
+    viewID = 0;
+    timeID[0] = '0';
+    currentMessage[0] = 'W';
+    currentMessage[1] = 'e';
+    currentMessage[2] = 'l';
+    currentMessage[3] = 'c';
+    currentMessage[4] = 'o';
+    currentMessage[5] = 'm';
+    currentMessage[6] = 'e';
 }
 
 void PickInterface::processKeyboard(unsigned char key, int x, int y)
@@ -53,23 +62,21 @@ void PickInterface::initGUI()
     
     addColumnToPanel(mainPanel);
     
+    // Show Message
+    GLUI_Panel *msgPanel= addPanelToPanel(mainPanel, " ", GLUI_PANEL_EMBOSSED);
+    msgPanel->set_alignment(GLUI_ALIGN_CENTER);
+    //addStaticTextToPanel(msgPanel, currentMessage);
+    //addEditTextToPanel(msgPanel, currentMessage);// TODO
+    
     // Undo
     GLUI_Panel *undoPanel= addPanelToPanel(mainPanel, "Undo", GLUI_PANEL_EMBOSSED);
     undoPanel->set_alignment(GLUI_ALIGN_CENTER);
-    addButtonToPanel(undoPanel, "Undo", 6);
+    addButtonToPanel(undoPanel, "Undo", 7);
     
     // Save Game
     GLUI_Panel *savePanel= addPanelToPanel(mainPanel, "Save", GLUI_PANEL_EMBOSSED);
     savePanel->set_alignment(GLUI_ALIGN_CENTER);
-    addButtonToPanel(savePanel, "Save", 7);
-    
-    // Resume Game
-    GLUI_Panel *resumePanel= addPanelToPanel(mainPanel, "Resume", GLUI_PANEL_EMBOSSED);
-    resumePanel->set_alignment(GLUI_ALIGN_CENTER);
-    addButtonToPanel(resumePanel, "Resume", 8);
-    
-    addColumnToPanel(mainPanel);
-    
+    addButtonToPanel(savePanel, "Save", 8);
     
     // Ambients
     GLUI_Panel *ambientsPanel= addPanelToPanel(mainPanel, "Ambients", GLUI_PANEL_EMBOSSED);
@@ -80,12 +87,28 @@ void PickInterface::initGUI()
     ambientListBox->add_item(2,"Jewels");
     ambientListBox->add_item(3,"Fabric");
     
+    addColumnToPanel(mainPanel);
+    
+    // Views
+    GLUI_Panel *viewPanel= addPanelToPanel(mainPanel, "View", GLUI_PANEL_EMBOSSED);
+    
+    GLUI_Listbox *viewListBox = addListboxToPanel(viewPanel, "Choose view: ",&viewID,10);
+    
+    viewListBox->add_item(1,"Default");
+    viewListBox->add_item(2,"Center");
+    viewListBox->add_item(3,"Top");
+    
     // Game Mode
     GLUI_Panel *gameModePanel= addPanelToPanel(mainPanel, "Game Mode", GLUI_PANEL_EMBOSSED);
-    GLUI_RadioGroup *gameMode = addRadioGroupToPanel(gameModePanel, &modeID, 10);
+    GLUI_RadioGroup *gameMode = addRadioGroupToPanel(gameModePanel, &modeID, 11);
     
     addRadioButtonToGroup(gameMode, "Player vs Computer");
     addRadioButtonToGroup(gameMode, "Player vs Player");
+    
+    // Time to Play
+    GLUI_Panel *timePanel= addPanelToPanel(mainPanel, "Play time:", GLUI_PANEL_EMBOSSED);
+    //GLUI_RadioGroup *gameMode = addRadioGroupToPanel(gameModePanel, &modeID, 12);
+    GLUI_Spinner *timeSpinner = addSpinnerToPanel(timePanel, timeID);
 }
 
 void PickInterface::processGUI(GLUI_Control *ctrl)
@@ -125,19 +148,19 @@ void PickInterface::processGUI(GLUI_Control *ctrl)
             
         case 6:
 		{
-			((PickScene *) ps)->undo();
+			((PickScene *) ps)->getMessage();
 			break;
 		};
             
         case 7:
 		{
-			((PickScene *) ps)->saveGame();
+			((PickScene *) ps)->undo();
 			break;
 		};
             
         case 8:
 		{
-			((PickScene *) ps)->resumeGame();
+			((PickScene *) ps)->playMovie();
 			break;
 		};
             
@@ -147,11 +170,24 @@ void PickInterface::processGUI(GLUI_Control *ctrl)
 			break;
 		};
             
-		case 10:
+        case 10:
+		{
+			((PickScene *) ps)->changeCamera(viewID);
+			break;
+		};
+            
+		case 11:
 		{
 			((PickScene *) ps)->changeGameMode(modeID);
 			break;
 		};
+           
+        case 12:
+		{
+			((PickScene *) ps)->changeTimeToPlay(timeID);
+			break;
+		};
+        
             
             
 	};

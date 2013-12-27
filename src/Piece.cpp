@@ -28,6 +28,9 @@ Piece::Piece():CGFobject(),exists(true){
     sph = new Sphere("", this->radius_2, this->slices, this->stacks);
     bigsph = new Sphere("", this->radius, this->slices, this->stacks);
     tor = new Torus("", 0.5, 1.0, 6, 6);
+    
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
 }
 
 Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
@@ -51,6 +54,9 @@ Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
     sph = new Sphere("", this->radius_2, this->slices, this->stacks);
     bigsph = new Sphere("", this->radius, this->slices, this->stacks);
     tor = new Torus("", 0.5, 1.0, 6, 6);
+    
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
    
 }
 
@@ -114,6 +120,10 @@ void Piece::draw(){
     // torus pieces
     else if (type == 2)
     {
+            glEnable(GL_NORMALIZE);
+            glEnable(GL_TEXTURE_GEN_S);
+            glEnable(GL_TEXTURE_GEN_T);
+        
         glPushMatrix();
         glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
         glRotatef(90,1,0,0);
@@ -124,6 +134,11 @@ void Piece::draw(){
         glPushMatrix();
         tor->draw();
         glPopMatrix();
+        
+
+            glDisable(GL_TEXTURE_GEN_S);
+            glDisable(GL_TEXTURE_GEN_T);
+    
     }
 
 }

@@ -63,6 +63,7 @@ public:
     /* Ambient */
     vector<Ambient*> ambients;
     Ambient* currentAmbient;
+    Primitive* boardBase;
     
     /* Game */
     Piece* p;
@@ -83,11 +84,13 @@ public:
     void drawBoardTile(int j);
     void drawPiece(int j);
     
+    void getMessage(); // get message about the game to show (example: "Suedes" "Movie playing..." "Suedes won" "King captured" etc etc etc)
     void undo();
-    void saveGame();
-    void resumeGame();
+    void playMovie();
     void changeAmbient(int ambientID);
     void changeGameMode(int modeID);
+    void changeCamera(int viewID);
+    void changeTimeToPlay(string timeID);
     
     
 private:

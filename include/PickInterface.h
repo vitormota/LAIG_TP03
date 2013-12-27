@@ -19,7 +19,9 @@ class PickInterface: public CGFinterface {
 		int x1,x2,y1,y2;
 		bool pos1,pos2;
     
-        int ambientID, modeID;
+        int ambientID, modeID, viewID;
+        char timeID[1];
+        char currentMessage[15];
 
 		PickScene *ps;
 };

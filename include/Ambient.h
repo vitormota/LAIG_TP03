@@ -30,10 +30,10 @@ class Ambient
 private:
     string id;
     string kingTexture, sTexture, mTexture;
-    string wallsTexture;
+    string skyTexture;
     string gTileText, sTileText, mTileText, kTileText;
-    Primitive* wall;
     int piecesType;
+    GLUquadric* sphereQuadric;
     
 public:
     Ambient(string id);
@@ -42,9 +42,9 @@ public:
     int getPiecesType();
     void setPiecesType(int type);
     
-    void setTextures(string kingTexture, string sTexture, string mTexture, string wallsTexture, string gTileText, string sTileText, string mTileText, string kTileText);
+    void setTextures(string kingTexture, string sTexture, string mTexture, string skyTexture, string gTileText, string sTileText, string mTileText, string kTileText);
     
-    CGFappearance* wallApp;
+    CGFappearance* skyApp;
     CGFappearance* kApp;
     CGFappearance* sApp;
     CGFappearance* mApp;
@@ -54,7 +54,7 @@ public:
     CGFappearance* tileMApp;
     
     void apply();
-    void drawWalls();
+    void drawSky();
 };
 
 #endif /* defined(__LAIG___P3__Ambient__) */

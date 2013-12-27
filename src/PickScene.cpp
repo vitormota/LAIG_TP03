@@ -89,12 +89,14 @@ void PickScene::init()
     
     /* Ambients */
     
+    boardBase = new Rectangle("rec", -0.5, -0.5, 0.5, 0.5);
+    
     // Marble ambient
     Ambient* marbleAmbient = new Ambient("MARBLE");
     marbleAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_MARBLE.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_MARBLE.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_MARBLE.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
@@ -109,7 +111,7 @@ void PickScene::init()
     jewelsAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_JEWELS.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_JEWELS.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLUE_JEWELS.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_JEWELS.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
@@ -123,7 +125,7 @@ void PickScene::init()
     fabricAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_FABRIC.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_FABRIC.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/FLOWERS_FABRIC.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_FABRIC.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
@@ -205,16 +207,28 @@ void PickScene::display()
 	// Draw axis
 	//axis.draw();
     
-    // Draw ambient walls
-    currentAmbient->wallApp->apply();
-    currentAmbient->drawWalls();
+    // Draw board base
+    /*glPushMatrix();
+    currentAmbient->tileGApp->apply();
+    boardBase->draw();
+    glPopMatrix();*/
+    
+    // Draw ambient sky
+    currentAmbient->skyApp->apply();
+    currentAmbient->drawSky();
+    
+    if(currentAmbient->getPiecesType() == 2)
+    {
+        currentAmbient->kApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
+        currentAmbient->sApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
+        currentAmbient->mApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
+    }
     
     // Set pieces type
     for(int p = 0; p < boardPieces.size(); p++)
     {
         boardPieces[p]->type = currentAmbient->getPiecesType();
     }
-    
     
 	// ---- END Background, camera and axis setup
     
@@ -451,6 +465,7 @@ void PickScene::drawBoardTile(int j)
 
 void PickScene::drawPiece(int i)
 {
+    
     // apply appearances
     if(boardPieces[i]->king)
     {
@@ -467,6 +482,7 @@ void PickScene::drawPiece(int i)
                 currentAmbient->mApp->apply();
             }
     boardPieces[i]->draw();
+
 }
 
 bool PickScene::un_elevatePiece(){
@@ -608,17 +624,17 @@ void PickScene::changeLight3()
     }
 }
 
+void PickScene::getMessage()
+{
+    // TODO
+}
+
 void PickScene::undo()
 {
     // TODO
 }
 
-void PickScene::saveGame()
-{
-    // TODO
-}
-
-void PickScene::resumeGame()
+void PickScene::playMovie()
 {
     // TODO
 }
@@ -642,6 +658,16 @@ void PickScene::changeGameMode(int modeID)
         {
             // TODO
         }
+}
+
+void PickScene::changeCamera(int viewID)
+{
+    // TODO
+}
+
+void PickScene::changeTimeToPlay(string timeID)
+{
+    // TODO
 }
 
 
