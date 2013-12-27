@@ -11,7 +11,8 @@
 Ambient::Ambient(string id)
 {
     this->id = id;
-    wall = new Rectangle("wall", -20, -20, 20, 20);
+    //wall = new Rectangle("wall", -20, -20, 20, 20);
+    wall = new Plane("wall",10);
     
     wallApp = new CGFappearance();
     kApp = new CGFappearance();
@@ -23,7 +24,7 @@ Ambient::Ambient(string id)
     tileMApp = new CGFappearance();
     
     // sets texture's wrap
-    wallApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
+    wallApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
     kApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
     sApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
     mApp->setTextureWrap(GL_CLAMP, GL_CLAMP);
@@ -53,6 +54,21 @@ void Ambient::setTextures(string kingTexture, string sTexture, string mTexture, 
     apply();
 }
 
+string Ambient::getID()
+{
+    return this->id;
+}
+
+void Ambient::setPiecesType(int type)
+{
+    this->piecesType = type;
+}
+
+int Ambient::getPiecesType()
+{
+    return this->piecesType;
+}
+
 void Ambient::apply()
 {
     // Apply current textures
@@ -64,22 +80,20 @@ void Ambient::apply()
     tileKApp->setTexture(kTileText);
     tileSApp->setTexture(sTileText);
     tileMApp->setTexture(mTileText);
-    
-    // Draw ambient walls
-    drawWalls();
 }
 
 void Ambient::drawWalls()
 {
-    // Left wall
+    // Right wall
     glPushMatrix();
+    //glTranslated(15, 0, 15);
     wallApp->apply();
+    wall->draw();
+    
+    //glTranslated(0, 0, 15);
+    //glRotated(180, 0, 1, 0);
+    // Left Wall
     wall->draw();
     glPopMatrix();
     
-    // Right Wall
-    glPushMatrix();
-    wallApp->apply();
-    wall->draw();
-    glPopMatrix();
 }

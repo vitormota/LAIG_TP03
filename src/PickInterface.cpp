@@ -19,6 +19,8 @@ PickInterface::PickInterface(PickScene *ps){
 	y2 = 0;
 	pos1 = false;
 	pos2 = false;
+    ambientID = 0;
+    modeID = 0;
 }
 
 void PickInterface::processKeyboard(unsigned char key, int x, int y)
@@ -30,9 +32,7 @@ void PickInterface::processKeyboard(unsigned char key, int x, int y)
 	{
 		case 'a':
 		{
-			// This is an example of accessing the associated scene
-			// To test, create the function toggleSomething in your scene to activate/deactivate something
-			//((LightingScene *) scene)->toggleSomething();
+			
 			break;
 		}
 	}
@@ -40,52 +40,52 @@ void PickInterface::processKeyboard(unsigned char key, int x, int y)
 
 void PickInterface::initGUI()
 {
-    /*
-     // Check CGFinterface.h and GLUI documentation for the types of controls available
-     GLUI_Panel *varPanel= addPanel("Group", 1);
-     addSpinnerToPanel(varPanel, "Val 1(interface)", 2, &testVar, 1);
-     
-     // You could also pass a reference to a variable from the scene class, if public
-     addSpinnerToPanel(varPanel, "Val 2(scene)", 2, &(((LightingScene*) scene)->sceneVar), 2);
-     */
-    
     // Main panel
-    GLUI_Panel *mainPanel= addPanel("Options", 1);
+    GLUI_Panel *mainPanel= addPanel("Game Options", 1);
+    mainPanel->set_alignment(GLUI_ALIGN_CENTER);
     
     // Lights
-    /*GLUI_Panel *lightsPanel= addPanelToPanel(mainPanel, "Luzes", 1);
-    addCheckboxToPanel(lightsPanel, "light0", ((LightingScene *) scene)->light_0, 2);
-    addCheckboxToPanel(lightsPanel, "light1", ((LightingScene *) scene)->light_1, 3);
-    addCheckboxToPanel(lightsPanel, "light2", ((LightingScene *) scene)->light_2, 4);
-    addCheckboxToPanel(lightsPanel, "light3", ((LightingScene *) scene)->light_3, 5);
-    addCheckboxToPanel(lightsPanel, "windowLight", ((LightingScene *) scene)->window_Light, 6);
+    GLUI_Panel *lightsPanel= addPanelToPanel(mainPanel, "Lights", 1);
+    addCheckboxToPanel(lightsPanel, "North", ((PickScene *) ps)->light_0, 2);
+    addCheckboxToPanel(lightsPanel, "South", ((PickScene *) ps)->light_1, 3);
+    addCheckboxToPanel(lightsPanel, "East", ((PickScene *) ps)->light_2, 4);
+    addCheckboxToPanel(lightsPanel, "West", ((PickScene *) ps)->light_3, 5);
     
     addColumnToPanel(mainPanel);
     
-    // Clock
-    GLUI_Panel *clockPanel= addPanelToPanel(mainPanel, "Clock", GLUI_PANEL_EMBOSSED);
-    clockPanel->set_alignment(GLUI_ALIGN_CENTER);
-    addButtonToPanel(clockPanel, "Stop/Start clock", 8);
+    // Undo
+    GLUI_Panel *undoPanel= addPanelToPanel(mainPanel, "Undo", GLUI_PANEL_EMBOSSED);
+    undoPanel->set_alignment(GLUI_ALIGN_CENTER);
+    addButtonToPanel(undoPanel, "Undo", 6);
+    
+    // Save Game
+    GLUI_Panel *savePanel= addPanelToPanel(mainPanel, "Save", GLUI_PANEL_EMBOSSED);
+    savePanel->set_alignment(GLUI_ALIGN_CENTER);
+    addButtonToPanel(savePanel, "Save", 7);
+    
+    // Resume Game
+    GLUI_Panel *resumePanel= addPanelToPanel(mainPanel, "Resume", GLUI_PANEL_EMBOSSED);
+    resumePanel->set_alignment(GLUI_ALIGN_CENTER);
+    addButtonToPanel(resumePanel, "Resume", 8);
     
     addColumnToPanel(mainPanel);
     
-    // Textures
-    GLUI_Panel *texturesPanel= addPanelToPanel(mainPanel, "Textures", GLUI_PANEL_EMBOSSED);
     
-    GLUI_Listbox *textureListBox = addListboxToPanel(texturesPanel, "Choose texture: ",&itemID,10);
+    // Ambients
+    GLUI_Panel *ambientsPanel= addPanelToPanel(mainPanel, "Ambients", GLUI_PANEL_EMBOSSED);
     
-    textureListBox->add_item(1,"Default");
-    textureListBox->add_item(2,"Blue");
-    textureListBox->add_item(3,"Map");
-    textureListBox->add_item(4,"Grid");
-    textureListBox->add_item(5,"Wood");
+    GLUI_Listbox *ambientListBox = addListboxToPanel(ambientsPanel, "Choose ambient: ",&ambientID,9);
     
-    // Robot Drawing Mode
-    GLUI_Panel *viewPanel= addPanelToPanel(mainPanel, "Drawing Mode", GLUI_PANEL_EMBOSSED);
-    GLUI_RadioGroup *viewMode = addRadioGroupToPanel(viewPanel, &viewID, 12);
+    ambientListBox->add_item(1,"Marble");
+    ambientListBox->add_item(2,"Jewels");
+    ambientListBox->add_item(3,"Fabric");
     
-    addRadioButtonToGroup(viewMode, "Textured");
-    addRadioButtonToGroup(viewMode, "Wireframe");*/
+    // Game Mode
+    GLUI_Panel *gameModePanel= addPanelToPanel(mainPanel, "Game Mode", GLUI_PANEL_EMBOSSED);
+    GLUI_RadioGroup *gameMode = addRadioGroupToPanel(gameModePanel, &modeID, 10);
+    
+    addRadioButtonToGroup(gameMode, "Player vs Computer");
+    addRadioButtonToGroup(gameMode, "Player vs Player");
 }
 
 void PickInterface::processGUI(GLUI_Control *ctrl)
@@ -99,9 +99,57 @@ void PickInterface::processGUI(GLUI_Control *ctrl)
 			break;
 		};
             
-		case 2:
+        case 2:
 		{
-			//((LightingScene *) scene)->changeLight0();
+			((PickScene *) ps)->changeLight0();
+            break;
+		};
+            
+        case 3:
+		{
+			((PickScene *) ps)->changeLight1();
+            break;
+		};
+            
+        case 4:
+		{
+			((PickScene *) ps)->changeLight2();
+            break;
+		};
+            
+        case 5:
+		{
+			((PickScene *) ps)->changeLight3();
+            break;
+		};
+            
+        case 6:
+		{
+			((PickScene *) ps)->undo();
+			break;
+		};
+            
+        case 7:
+		{
+			((PickScene *) ps)->saveGame();
+			break;
+		};
+            
+        case 8:
+		{
+			((PickScene *) ps)->resumeGame();
+			break;
+		};
+            
+        case 9:
+		{
+			((PickScene *) ps)->changeAmbient(ambientID);
+			break;
+		};
+            
+		case 10:
+		{
+			((PickScene *) ps)->changeGameMode(modeID);
 			break;
 		};
             

@@ -19,63 +19,76 @@ using namespace std;
 #define NUM_COLS 9
 #define BOARD_TILE_SIDE_SIZE 3
 
-string TEST_BOARD[81] = {
-	"   ","   ","   ","m05","m06","m07","   ","   ","   " ,
-	"   ","   ","   ","   ","m08","   ","   ","   ","   " ,
-	"   ","   ","   ","   ","s02","   ","   ","   ","   " ,
-	"m01","   ","   ","   ","s01","   ","   ","   ","m09" ,
-	"m02","m04","s08","s07","rei","s03","s04","m11","m10" ,
-	"m03","   ","   ","   ","s05","   ","   ","   ","m12" ,
-	"   ","   ","   ","   ","s06","   ","   ","   ","   " ,
-	"   ","   ","   ","   ","m16","   ","   ","   ","   " ,
-	"   ","   ","   ","m13","m14","m15","   ","   ","   "  };
-
 void PickScene::init()
 {
 	//DEBUG -- TODO change this var on new game options
 	player = 'm';
-
+    
 	game_states = new stack<string>;
-
+    
 	// Apply transformations corresponding to the camera position relative to the origin
 	
 	// normal init, no changes needed
-
+    
 	// Enables lighting computations
 	glEnable(GL_LIGHTING);
-
+    
+    // Global ambient light (do not confuse with ambient component of individual lights)
+    float globalAmbientLight[4]= {0.2,0.2,0.2,1.0};
+    
 	// Sets up some lighting parameters
 	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, CGFlight::background_ambient);  // Define ambient light
-
-	// Declares and enables a light
-	float light0_pos[4] = {6.0, 6.0, 6.0, 1.0};
-	light0 = new CGFlight(GL_LIGHT0, light0_pos);
-	light0->enable();
-
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, CGFlight::background_ambient/*globalAmbientLight*/);  // Define ambient light
+    
 	// Defines a default normal
 	glNormal3f(0,0,1);
-
-	//request server init board and parse it
-	initBoard();
-
-	// Initialize update period and previousTime
+    
+    /* Ilumination */
+    light_0 = new int;
+    light_1 = new int;
+    light_2 = new int;
+    light_3 = new int;
+    
+    *light_0 = 1;
+    *light_1 = 1;
+    *light_2 = 1;
+    *light_3 = 1;
+    
+    // Declare and enable lights
+    float light0_pos[4] = {-6.0, 6.0, -6.0, 1.0};
+	float light1_pos[4] = {6.0, 6.0, 6.0, 1.0};
+    float light2_pos[4] = {6.0, 6.0, -6.0, 1.0};
+    float light3_pos[4] = {-6.0, 6.0, 6.0, 1.0};
+    
+	light0 = new CGFlight(GL_LIGHT0, light0_pos);
+    light1 = new CGFlight(GL_LIGHT1, light1_pos);
+    light2 = new CGFlight(GL_LIGHT2, light2_pos);
+    light3 = new CGFlight(GL_LIGHT3, light3_pos);
+    
+	light0->enable();
+    light1->enable();
+    light2->enable();
+    light3->enable();
+    
+    
+    /* Animation */
+    
+    // Initialize update period and previousTime
 	setUpdatePeriod(100);
 	previousTime = 0;
-
 	animatePiece = false;
-
+    
 	// animate chosen piece (chose coordinates on the board of it)
 	int x = 8;
 	int y = 4;
-
+    
 	// final coordinates
 	int xFinal = 8;
 	int yFinal = 6;
 	anim = new Animation(x, y, xFinal, yFinal, glutGet( GLUT_ELAPSED_TIME ));
     
-    // Create Ambients
-   
+    /* Ambients */
+    
     // Marble ambient
     Ambient* marbleAmbient = new Ambient("MARBLE");
     marbleAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_MARBLE.jpg",
@@ -87,24 +100,45 @@ void PickScene::init()
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
     
+    marbleAmbient->setPiecesType(0);
     ambients.push_back(marbleAmbient);
     
     
     // Jewels Ambient
     Ambient* jewelsAmbient = new Ambient("JEWELS");
-    jewelsAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_MARBLE.jpg",
+    jewelsAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_JEWELS.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_JEWELS.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLUE_JEWELS.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
                                "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
     
+    jewelsAmbient->setPiecesType(1);
     ambients.push_back(jewelsAmbient);
+    
+    // Fabric Ambient
+    Ambient* fabricAmbient = new Ambient("FABRIC");
+    fabricAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_FABRIC.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_FABRIC.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/FLOWERS_FABRIC.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
+    
+    fabricAmbient->setPiecesType(2);
+    ambients.push_back(fabricAmbient);
     
     
     currentAmbient = marbleAmbient; // default ambient
+    
+    
+    
+    //request server init board and parse it
+	initBoard();
     
 }
 
@@ -119,13 +153,13 @@ void PickScene::update(unsigned long time)
 		unsigned long passedTime = time - previousTime;
 		previousTime = time;
 		animatePiece = true;
-
+        
 		if(animatePiece == true)
 		{
 			// animate chosen piece (chose coordinates on the board of it)
 			int x = 8;
 			int y = 4;
-
+            
 			// find piece with the position on the board x,y
 			for(unsigned int i = 0; i < boardPieces.size(); i++)
 			{
@@ -140,44 +174,57 @@ void PickScene::update(unsigned long time)
 			}
 		}
 	}
-
+    
 }
 
 void PickScene::display()
 {
-
+    
 	// TEST THE PICKING -> To switch from picking the board tiles or the board pieces
 	this->pickBoardTile = true;
 	this->pickPiece = true;
-
-
+    
+    
 	// ---- BEGIN Background, camera and axis setup
-
+    
 	// Clear image and depth buffer everytime we update the scene
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
+    
 	// Initialize Model-View matrix as identity (no transformation
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+    
 	CGFscene::activeCamera->applyView();
-
-	// Draw (and update) light
+    
+	// Draw (and update) lights
 	light0->draw();
-
+    light1->draw();
+    light2->draw();
+    light3->draw();
+    
 	// Draw axis
 	//axis.draw();
-
-
+    
+    // Draw ambient walls
+    currentAmbient->wallApp->apply();
+    currentAmbient->drawWalls();
+    
+    // Set pieces type
+    for(int p = 0; p < boardPieces.size(); p++)
+    {
+        boardPieces[p]->type = currentAmbient->getPiecesType();
+    }
+    
+    
 	// ---- END Background, camera and axis setup
-
-
+    
+    
 	// ---- BEGIN feature demos
-
+    
 	//// scale down a bit
 	glPushMatrix();
 	glScalef(0.5, 0.5, 0.5);
-
+    
 	// Picking only the pieces
 	if((this->pickPiece == true) && (this->pickBoardTile == false))
 	{
@@ -185,12 +232,12 @@ void PickScene::display()
 		{
 			glPushName(boardPieces[i]->getYPos());
 			glPushName(boardPieces[i]->getXPos());
-
+            
 			drawPiece(i);
-
+            
 			glPopName();
 			glPopName();
-
+            
 		}
 	}
 	// Picking only the board tiles
@@ -198,17 +245,17 @@ void PickScene::display()
 	{
 		for(int i = 0; i < boardTiles.size();i++)
 		{
-
+            
 			glPushName(boardTiles[i]->getYPos());
 			glPushName(boardTiles[i]->getXPos());
-
+            
 			drawBoardTile(i);
-
+            
 			glPopName();
 			glPopName();
-
+            
 		}
-
+        
 		for(int j = 0; j < boardPieces.size();j++)
 		{
 			drawPiece(j);
@@ -221,27 +268,27 @@ void PickScene::display()
 		{
 			glPushName(boardPieces[i]->getYPos());
 			glPushName(boardPieces[i]->getXPos());
-
+            
             drawPiece(i);
-
+            
 			glPopName();
 			glPopName();
-
+            
 		}
-
+        
 		for(int j = 0; j < boardTiles.size();j++)
 		{
-
+            
 			glPushName(boardTiles[j]->getYPos());
 			glPushName(boardTiles[j]->getXPos());
-
+            
             drawBoardTile(j);
-
+            
 			glPopName();
 			glPopName();
-
+            
 		}
-
+        
 	}
 	// Only draw the board without picking
 	else{
@@ -249,12 +296,12 @@ void PickScene::display()
 		{
 			drawPiece(i);
 		}
-
+        
 		for(int j = 0; j < boardTiles.size();j++)
 		{
 			drawBoardTile(j);
 		}
-
+        
 	}
     
     
@@ -271,45 +318,44 @@ void PickScene::display()
             glPopMatrix();
         }
     }
-
+    
 	glPopMatrix();
-
+    
 	//example code to be used with picking interface
 	//a move is sent to server, if accepted changes are made to board
 	//the board is saved for the undo feature in a stack
-
+    
 	/*string newBoard;
-	if(con->play(3,0,3,1,board,newBoard)){
-	//save board
-	game_states->push(newBoard);
-	//change board
-	cells[1*9+3]->piece = cells[0*9+3]->piece;
-	cells[0*9+3]->piece = NULL;
-	}
-
-	//safety
-	con->quit();*/
-
+     if(con->play(3,0,3,1,board,newBoard)){
+     //save board
+     game_states->push(newBoard);
+     //change board
+     cells[1*9+3]->piece = cells[0*9+3]->piece;
+     cells[0*9+3]->piece = NULL;
+     }
+     
+     //safety
+     con->quit();*/
+    
 	//end example code
-
+    
 	// ---- END feature demos
-
+    
 	// glutSwapBuffers() will swap pointers so that the back buffer becomes the front buffer and vice-versa
 	glutSwapBuffers();
 }
 
 PickScene::~PickScene()
 {
-	delete(materialAppearance);
 	delete(obj);
 	delete(light0);
 }
 
 void PickScene::initBoard(){
-
+    
 	board = con->get_init_board();
 	game_states->push(board);
-
+    
 	int x=0, y=0, pos = 0;
 	Piece *p = NULL;
 	for(int i = 0; i < board.length(); i++){
@@ -343,7 +389,7 @@ void PickScene::initBoard(){
 			p->id[2] = board[i+2];
 			p->id[3] = '\0';
 		}
-
+        
 		if((board[i] == ',' || i == board.length()-1)){
 			// Set Piece position
 			if(p){
@@ -359,7 +405,7 @@ void PickScene::initBoard(){
 			x++;
 		}
 	}
-
+    
 	// Create board tiles
 	for (int y = 0; y < NUM_ROWS; y++)
 	{
@@ -370,9 +416,9 @@ void PickScene::initBoard(){
 			tile->setYPos(y);
 			this->boardTiles.push_back(tile);
 		}
-
+        
 	}
-
+    
 }
 
 void PickScene::drawBoardTile(int j)
@@ -513,4 +559,89 @@ string replace(string data){
 	}
 	return res;
 }
+
+void PickScene::changeLight0()
+{
+    if(*light_0 == 1)
+    {
+        light0->enable();
+    }
+    else
+    {
+        light0->disable();
+    }
+}
+
+void PickScene::changeLight1()
+{
+    if(*light_1 == 1)
+    {
+        light1->enable();
+    }
+    else
+    {
+        light1->disable();
+    }
+}
+
+void PickScene::changeLight2()
+{
+    if(*light_2 == 1)
+    {
+        light2->enable();
+    }
+    else
+    {
+        light2->disable();
+    }
+}
+
+void PickScene::changeLight3()
+{
+    if(*light_3 == 1)
+    {
+        light3->enable();
+    }
+    else
+    {
+        light3->disable();
+    }
+}
+
+void PickScene::undo()
+{
+    // TODO
+}
+
+void PickScene::saveGame()
+{
+    // TODO
+}
+
+void PickScene::resumeGame()
+{
+    // TODO
+}
+
+void PickScene::changeAmbient(int ambientID)
+{
+    currentAmbient = ambients[ambientID-1];
+}
+
+void PickScene::changeGameMode(int modeID)
+{
+    // TODO -> CHANGE GAME MODE -> START NEW GAME WITH THE CHOSEN MODE
+    
+    // if the mode is Player vs Computer
+    if(modeID == 0)
+    {
+        // TODO
+    }
+    // if the mode is Player vs Player
+    else
+        {
+            // TODO
+        }
+}
+
 

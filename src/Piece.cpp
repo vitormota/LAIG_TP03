@@ -21,10 +21,13 @@ Piece::Piece():CGFobject(),exists(true){
 	this->yPos = 0;
 	this->king = false;
 	id = new char[4];
+    type = 0;
     
     firstC = new Cylinder("",this->radius,this->radius_2,this->height,this->slices,this->stacks);
     secondC = new Cylinder("",this->radius_2,this->radius_2,this->height,this->slices,this->stacks);
     sph = new Sphere("", this->radius_2, this->slices, this->stacks);
+    bigsph = new Sphere("", this->radius, this->slices, this->stacks);
+    tor = new Torus("", 0.5, 1.0, 6, 6);
 }
 
 Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
@@ -41,11 +44,14 @@ Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
 	this->yPos = 0;
 	this->king = false;
 	id = new char[4];
-    
+    type = 0;
     
     firstC = new Cylinder("",this->radius,this->radius_2,this->height,this->slices,this->stacks);
     secondC = new Cylinder("",this->radius_2,this->radius_2,this->height,this->slices,this->stacks);
     sph = new Sphere("", this->radius_2, this->slices, this->stacks);
+    bigsph = new Sphere("", this->radius, this->slices, this->stacks);
+    tor = new Torus("", 0.5, 1.0, 6, 6);
+   
 }
 
 Piece::~Piece(){
@@ -65,8 +71,11 @@ void Piece::un_elevate(){
 
 void Piece::draw(){
 	if(!exists) return;
-	//text->apply();
-	glPushMatrix();
+    
+    // default pieces
+    if(type == 0)
+    {
+    glPushMatrix();
 	glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
 	glRotatef(90,1,0,0);
 	glRotatef(180,0,1,0);
@@ -86,6 +95,36 @@ void Piece::draw(){
 	drawBase();
 	
 	glPopMatrix();
+    }
+    // round pieces
+    else if (type == 1)
+    {
+        glPushMatrix();
+        glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
+        glRotatef(90,1,0,0);
+        glRotatef(180,0,1,0);
+        //+y is +z
+        glTranslatef(0,0,elevation + radius);
+        
+        glPushMatrix();
+        bigsph->draw();
+        glPopMatrix();
+
+    }
+    // torus pieces
+    else if (type == 2)
+    {
+        glPushMatrix();
+        glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
+        glRotatef(90,1,0,0);
+        glRotatef(180,0,1,0);
+        //+y is +z
+        glTranslatef(0,0,elevation + 0.5);
+        
+        glPushMatrix();
+        tor->draw();
+        glPopMatrix();
+    }
 
 }
 

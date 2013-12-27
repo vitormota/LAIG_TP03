@@ -47,6 +47,8 @@ public:
     Primitive* firstC;
     Primitive* secondC;
     Primitive* sph;
+    Primitive* bigsph;
+    Primitive* tor;
 
 	void elevate();
 	void un_elevate();
@@ -54,6 +56,7 @@ public:
 	bool exists;
 	char *id;
 	int xPos, yPos;
+    int type;
 	
 private:
 	

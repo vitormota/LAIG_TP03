@@ -363,7 +363,7 @@
         // para objectos que nao tem material atribuido, como
         // e' o caso dos eixos e da esfera que simboliza a fonte de luz...
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-        glEnable(GL_COLOR_MATERIAL);
+        //glEnable(GL_COLOR_MATERIAL);
         
         // INICIALIZACOES RELACIONADAS COM OS "EVALUATORS"
         
@@ -419,7 +419,7 @@
         glDisable(GL_MAP2_TEXTURE_COORD_2);
         glDisable(GL_TEXTURE_2D);
         
-        glDisable(GL_COLOR_MATERIAL);
+        //glDisable(GL_COLOR_MATERIAL);
     }
 
     void Patch::draw() {
@@ -427,7 +427,7 @@
         // permissao de atribuicao directa de cores
         // para objectos que nao tem material atribuido, como
         // e' o caso dos eixos e da esfera que simboliza a fonte de luz...
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
         glEnable(GL_COLOR_MATERIAL);
         
         // INICIALIZACOES RELACIONADAS COM OS "EVALUATORS"

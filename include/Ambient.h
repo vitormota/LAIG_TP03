@@ -33,11 +33,14 @@ private:
     string wallsTexture;
     string gTileText, sTileText, mTileText, kTileText;
     Primitive* wall;
+    int piecesType;
     
 public:
     Ambient(string id);
     ~Ambient();
-    int getID();
+    string getID();
+    int getPiecesType();
+    void setPiecesType(int type);
     
     void setTextures(string kingTexture, string sTexture, string mTexture, string wallsTexture, string gTileText, string sTileText, string mTileText, string kTileText);
     
