@@ -7,6 +7,7 @@
 #include "PConnect.h"
 #include "Piece.h"
 #include "Animation.h"
+#include "Ambient.h"
 #include <string.h>
 #include <stack>
 #include <vector>
@@ -66,6 +67,12 @@ public:
 	bool elevatePiece(int x,int y);
 	bool un_elevatePiece();
 	bool emptySpace(int x,int y);
+    
+    void drawBoardTile(int j);
+    void drawPiece(int j);
+    
+    vector<Ambient*> ambients;
+    Ambient* currentAmbient;
 
 private:
 	CGFlight* light0;

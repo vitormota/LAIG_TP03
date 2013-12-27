@@ -5,7 +5,7 @@
 using namespace std;
 
 PConnect::PConnect():connected(false){
-	this->port = 60072;
+	this->port = 60070;
 	this->address = "127.0.0.1";
 }
 
@@ -105,7 +105,7 @@ bool PConnect::socket_connect(){
 
 void PConnect::send_message(char *msg, int len){
 #ifndef _WIN32
-	size_t sent=write(this->fd, msg, len);
+	size_t sent=write(this->fd, msg, len+1);
 	if(sent==0 && len!=0){
 		printf("Client: send() error .\n" );
 	}
@@ -195,11 +195,19 @@ bool PConnect::validAnswer(char *ans)
 string PConnect::parse_board(char *ans,int pos){
 	char board[350];
 	unsigned int j=0;
-	for(unsigned int i=pos; i < strlen(ans) -3; i++,j++)
-		board[j]=ans[i];
 
+#ifndef _WIN32
+    for(unsigned int i=pos; i < strlen(ans) -2; i++,j++)
+		board[j]=ans[i];
+    
 
 	board[j] = '\0';
-
+#else
+    for(unsigned int i=pos; i < strlen(ans) -3; i++,j++)
+		board[j]=ans[i];
+    
+    
+	board[j] = '\0';
+#endif
 	return string(board);
 }

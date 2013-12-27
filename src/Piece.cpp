@@ -5,6 +5,8 @@
 #include <math.h>
 #define _RAD_TO_DEG M_PI / 180.0
 
+
+
 Piece::Piece():CGFobject(),exists(true){
 	elevation = 0.0;
 	quad = gluNewQuadric();
@@ -19,6 +21,10 @@ Piece::Piece():CGFobject(),exists(true){
 	this->yPos = 0;
 	this->king = false;
 	id = new char[4];
+    
+    firstC = new Cylinder("",this->radius,this->radius_2,this->height,this->slices,this->stacks);
+    secondC = new Cylinder("",this->radius_2,this->radius_2,this->height,this->slices,this->stacks);
+    sph = new Sphere("", this->radius_2, this->slices, this->stacks);
 }
 
 Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
@@ -35,6 +41,11 @@ Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
 	this->yPos = 0;
 	this->king = false;
 	id = new char[4];
+    
+    
+    firstC = new Cylinder("",this->radius,this->radius_2,this->height,this->slices,this->stacks);
+    secondC = new Cylinder("",this->radius_2,this->radius_2,this->height,this->slices,this->stacks);
+    sph = new Sphere("", this->radius_2, this->slices, this->stacks);
 }
 
 Piece::~Piece(){
@@ -59,16 +70,16 @@ void Piece::draw(){
 	glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
 	glRotatef(90,1,0,0);
 	glRotatef(180,0,1,0);
+    //+y is +z
+    glTranslatef(0,0,elevation);
 	
 	glPushMatrix();{
-		//missing some push and pop somewhere so +y is +z
-		glTranslatef(0,0,elevation);
-		//elevation=0;
-		gluCylinder(quad,radius,radius_2,height,slices,stacks);
+        
+		firstC->draw();
 		glTranslatef(0,0.0,1.0);
-		gluCylinder(quad,radius_2,radius_2,height,slices,stacks);
+		secondC->draw();
 		glTranslatef(0,0.0,1.0);
-		glutSolidSphere(radius_2,slices,stacks);
+		sph->draw();
 	}
 	glPopMatrix();
 
@@ -83,14 +94,18 @@ void Piece::drawBase(){
 	float angle = angle_step;
 	float x, z;
 	glPushMatrix();{
-		glTranslatef(0,elevation,0);
 		glRotatef(90,1,0,0);
 		glBegin(GL_POLYGON);{
 			for(int i = 0; i < this->slices ;i++){
 				angle += angle_step;
-				x = cos(angle*_RAD_TO_DEG)*this->radius;
-				z = sin(angle*_RAD_TO_DEG)*this->radius;
-				glVertex3f(x,0,z);
+               
+                glVertex2f(x, z);
+                x = cos(angle*_RAD_TO_DEG)*this->radius_2;
+				z = sin(angle*_RAD_TO_DEG)*this->radius_2;
+                x = x * this->radius_2 + this->radius_2;
+                z = z * this->radius_2 + this->radius_2;
+                
+                glTexCoord2f(x, z);
 			}
 		}glEnd();
 

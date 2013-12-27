@@ -73,7 +73,39 @@ void PickScene::init()
 	int xFinal = 8;
 	int yFinal = 6;
 	anim = new Animation(x, y, xFinal, yFinal, glutGet( GLUT_ELAPSED_TIME ));
-
+    
+    // Create Ambients
+   
+    // Marble ambient
+    Ambient* marbleAmbient = new Ambient("MARBLE");
+    marbleAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
+    
+    ambients.push_back(marbleAmbient);
+    
+    
+    // Jewels Ambient
+    Ambient* jewelsAmbient = new Ambient("JEWELS");
+    jewelsAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WALL_MARBLE.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
+                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
+    
+    ambients.push_back(jewelsAmbient);
+    
+    
+    currentAmbient = marbleAmbient; // default ambient
+    
 }
 
 void PickScene::update(unsigned long time)
@@ -134,7 +166,7 @@ void PickScene::display()
 	light0->draw();
 
 	// Draw axis
-	axis.draw();
+	//axis.draw();
 
 
 	// ---- END Background, camera and axis setup
@@ -154,7 +186,7 @@ void PickScene::display()
 			glPushName(boardPieces[i]->getYPos());
 			glPushName(boardPieces[i]->getXPos());
 
-			boardPieces[i]->draw();
+			drawPiece(i);
 
 			glPopName();
 			glPopName();
@@ -170,7 +202,7 @@ void PickScene::display()
 			glPushName(boardTiles[i]->getYPos());
 			glPushName(boardTiles[i]->getXPos());
 
-			boardTiles[i]->draw();
+			drawBoardTile(i);
 
 			glPopName();
 			glPopName();
@@ -179,10 +211,10 @@ void PickScene::display()
 
 		for(int j = 0; j < boardPieces.size();j++)
 		{
-			boardPieces[j]->draw();
+			drawPiece(j);
 		}
 	}
-	// Picking pieces and board tiles (FOR TESTING ONLY)
+	// Picking pieces and board tiles
 	else if((this->pickBoardTile == true) && (this->pickPiece == true))
 	{
 		for(int i = 0; i < boardPieces.size();i++)
@@ -190,7 +222,7 @@ void PickScene::display()
 			glPushName(boardPieces[i]->getYPos());
 			glPushName(boardPieces[i]->getXPos());
 
-			boardPieces[i]->draw();
+            drawPiece(i);
 
 			glPopName();
 			glPopName();
@@ -203,7 +235,7 @@ void PickScene::display()
 			glPushName(boardTiles[j]->getYPos());
 			glPushName(boardTiles[j]->getXPos());
 
-			boardTiles[j]->draw();
+            drawBoardTile(j);
 
 			glPopName();
 			glPopName();
@@ -215,15 +247,30 @@ void PickScene::display()
 	else{
 		for(int i = 0; i < boardPieces.size();i++)
 		{
-			boardPieces[i]->draw();
+			drawPiece(i);
 		}
 
 		for(int j = 0; j < boardTiles.size();j++)
 		{
-			boardTiles[j]->draw();
+			drawBoardTile(j);
 		}
 
 	}
+    
+    
+    // draw auxiliary board
+    for(int k = 0; k < boardPieces.size(); k++)
+    {
+        Piece* currentPiece = boardPieces[k];
+        
+        if((!currentPiece->exists) && (currentPiece->player == this->player))
+        {
+            glPushMatrix();
+            glTranslated(10, 0, 10); // TODO -> aqui tem q ter uma variável para a peça aparecer ao lado da anterior .. ou seja .. o x ou z tem q aumentar para elas aparecerem umas ao lado das outras
+            drawPiece(k);
+            glPopMatrix();
+        }
+    }
 
 	glPopMatrix();
 
@@ -313,46 +360,6 @@ void PickScene::initBoard(){
 		}
 	}
 
-	// 
-	// WRONG - do prolog vem uma string, nao um array de strings
-	//
-	// Create board pieces
-	//int x=0, y=0;
-	//for(int i = 0; i < 81; i++){
-	//	if(x==9){
-	//		x=0;
-	//		y++;
-	//	}
-	//	
-	//	string pieceStr = TEST_BOARD[i]; // TODO -> change TEST_BOARD to board
-	//	Piece* newPiece = new Piece();
-	//	
-	//	if(pieceStr[0] == 'm'){
-	//		newPiece->player='m';
-	//		// Set Piece position
-	//		newPiece->setXPos(x);
-	//		newPiece->setYPos(y);
-	//		// Save piece
-	//		this->boardPieces.push_back(newPiece);
-	//	}else if(pieceStr[0] =='s'){
-	//		newPiece->player='s';
-	//		// Set Piece position
-	//		newPiece->setXPos(x);
-	//		newPiece->setYPos(y);
-	//		// Save piece
-	//		this->boardPieces.push_back(newPiece);
-	//	}else if(pieceStr[0] == 'r'){
-	//		newPiece->player='s';
-	//		// Set Piece position
-	//		newPiece->setXPos(x);
-	//		newPiece->setYPos(y);
-	//		// Save piece
-	//		this->boardPieces.push_back(newPiece);
-	//	}
-	//	
-	//	x++;
-	//}
-
 	// Create board tiles
 	for (int y = 0; y < NUM_ROWS; y++)
 	{
@@ -366,6 +373,54 @@ void PickScene::initBoard(){
 
 	}
 
+}
+
+void PickScene::drawBoardTile(int j)
+{
+    // apply appearances
+    // rei -> 40
+    // m ->  3,  4,  5, 13, 27, 35, 36, 37, 43, 44, 45, 53, 67, 75, 76, 77
+    // s -> 22, 31, 38, 39, 41, 42, 49, 58
+    
+    if((j == 3) || (j == 4) || (j == 5) || (j == 13) || (j == 27) || (j == 35) || (j == 36) || (j == 37) || (j == 43) || (j == 44) || (j == 45) || (j == 53) || (j == 67) || (j == 75) || (j == 76) || (j == 77))
+    {
+        currentAmbient->tileMApp->apply();
+    }
+    else if((j == 22) || (j == 31) || (j == 38) || (j == 39) || (j == 41) || (j == 42) || (j == 49) || (j == 58))
+    {
+        currentAmbient->tileSApp->apply();
+    }
+    else if(j == 40)
+    {
+        currentAmbient->tileKApp->apply();
+    }
+    else
+    {
+        currentAmbient->tileGApp->apply();
+    }
+    
+    boardTiles[j]->draw();
+    
+}
+
+void PickScene::drawPiece(int i)
+{
+    // apply appearances
+    if(boardPieces[i]->king)
+    {
+        currentAmbient->kApp->apply();
+    }
+    else
+        if(boardPieces[i]->player == 's')
+        {
+            currentAmbient->sApp->apply();
+        }
+        else
+            if(boardPieces[i]->player == 'm')
+            {
+                currentAmbient->mApp->apply();
+            }
+    boardPieces[i]->draw();
 }
 
 bool PickScene::un_elevatePiece(){

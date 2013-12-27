@@ -21,6 +21,95 @@ PickInterface::PickInterface(PickScene *ps){
 	pos2 = false;
 }
 
+void PickInterface::processKeyboard(unsigned char key, int x, int y)
+{
+	// Uncomment below if you would like to process the default keys (e.g. 's' for snapshot, 'Esc' for exiting, ...)
+	// CGFinterface::processKeyboard(key, x, y);
+    
+	switch(key)
+	{
+		case 'a':
+		{
+			// This is an example of accessing the associated scene
+			// To test, create the function toggleSomething in your scene to activate/deactivate something
+			//((LightingScene *) scene)->toggleSomething();
+			break;
+		}
+	}
+}
+
+void PickInterface::initGUI()
+{
+    /*
+     // Check CGFinterface.h and GLUI documentation for the types of controls available
+     GLUI_Panel *varPanel= addPanel("Group", 1);
+     addSpinnerToPanel(varPanel, "Val 1(interface)", 2, &testVar, 1);
+     
+     // You could also pass a reference to a variable from the scene class, if public
+     addSpinnerToPanel(varPanel, "Val 2(scene)", 2, &(((LightingScene*) scene)->sceneVar), 2);
+     */
+    
+    // Main panel
+    GLUI_Panel *mainPanel= addPanel("Options", 1);
+    
+    // Lights
+    /*GLUI_Panel *lightsPanel= addPanelToPanel(mainPanel, "Luzes", 1);
+    addCheckboxToPanel(lightsPanel, "light0", ((LightingScene *) scene)->light_0, 2);
+    addCheckboxToPanel(lightsPanel, "light1", ((LightingScene *) scene)->light_1, 3);
+    addCheckboxToPanel(lightsPanel, "light2", ((LightingScene *) scene)->light_2, 4);
+    addCheckboxToPanel(lightsPanel, "light3", ((LightingScene *) scene)->light_3, 5);
+    addCheckboxToPanel(lightsPanel, "windowLight", ((LightingScene *) scene)->window_Light, 6);
+    
+    addColumnToPanel(mainPanel);
+    
+    // Clock
+    GLUI_Panel *clockPanel= addPanelToPanel(mainPanel, "Clock", GLUI_PANEL_EMBOSSED);
+    clockPanel->set_alignment(GLUI_ALIGN_CENTER);
+    addButtonToPanel(clockPanel, "Stop/Start clock", 8);
+    
+    addColumnToPanel(mainPanel);
+    
+    // Textures
+    GLUI_Panel *texturesPanel= addPanelToPanel(mainPanel, "Textures", GLUI_PANEL_EMBOSSED);
+    
+    GLUI_Listbox *textureListBox = addListboxToPanel(texturesPanel, "Choose texture: ",&itemID,10);
+    
+    textureListBox->add_item(1,"Default");
+    textureListBox->add_item(2,"Blue");
+    textureListBox->add_item(3,"Map");
+    textureListBox->add_item(4,"Grid");
+    textureListBox->add_item(5,"Wood");
+    
+    // Robot Drawing Mode
+    GLUI_Panel *viewPanel= addPanelToPanel(mainPanel, "Drawing Mode", GLUI_PANEL_EMBOSSED);
+    GLUI_RadioGroup *viewMode = addRadioGroupToPanel(viewPanel, &viewID, 12);
+    
+    addRadioButtonToGroup(viewMode, "Textured");
+    addRadioButtonToGroup(viewMode, "Wireframe");*/
+}
+
+void PickInterface::processGUI(GLUI_Control *ctrl)
+{
+	
+    printf ("GUI control id: %d\n  ",ctrl->user_id);
+	switch (ctrl->user_id)
+	{
+		case 1:
+		{
+			break;
+		};
+            
+		case 2:
+		{
+			//((LightingScene *) scene)->changeLight0();
+			break;
+		};
+            
+            
+	};
+    
+}
+
 void PickInterface::processMouse(int button, int state, int x, int y) 
 {
 	CGFinterface::processMouse(button,state, x, y);

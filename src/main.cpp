@@ -46,14 +46,11 @@ int main(int argc, char* argv[]) {
 
 	try {
 
-#if _WIN32
-
 		con = new PConnect();
 		ps->con = con;
 		if(!con->socket_connect()){
 			throw exception();
 		}
-#endif
 
 		app.init(&argc, argv);
 		app.setScene(ps);

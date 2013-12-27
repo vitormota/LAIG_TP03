@@ -12,6 +12,8 @@
 
 BoardTile::BoardTile() {
     this->r = new Rectangle("",-1.5, -1.5, 1.5, 1.5);
+    this->r->setTexlength_s(5);
+    this->r->setTexlength_t(5);
 }
 
 BoardTile::~BoardTile() {

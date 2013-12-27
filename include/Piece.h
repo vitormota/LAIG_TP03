@@ -6,6 +6,7 @@
 */
 
 #include <map>
+#include "Primitive.h"
 
 #if _WIN32
 #include <CGFobject.h>
@@ -20,8 +21,6 @@
 #include "CGFtexture.h"
 #endif
 //end
-
-
 
 class Piece : public CGFobject{
 
@@ -44,6 +43,10 @@ public:
 	CGFappearance *app;
 	CGFtexture *text;
 	GLUquadric *quad;
+    
+    Primitive* firstC;
+    Primitive* secondC;
+    Primitive* sph;
 
 	void elevate();
 	void un_elevate();
