@@ -2,6 +2,7 @@
 #define PICKSCENE_H
 
 #include "CGFscene.h"
+#include "CGFcamera.h"
 #include "Primitive.h"
 #include "BoardTile.h"
 #include "PConnect.h"
@@ -74,6 +75,8 @@ public:
     string board;
 	vector<Piece*> boardPieces;
 	vector<BoardTile*> boardTiles;
+    CGFcamera* defaultCamera;
+    CGFcamera* currentCamera;
     
     void initBoard();
 	bool movePiece(int xi, int yi, int xf, int yf);
@@ -84,13 +87,14 @@ public:
     void drawBoardTile(int j);
     void drawPiece(int j);
     
-    void getMessage(); // get message about the game to show (example: "Suedes" "Movie playing..." "Suedes won" "King captured" etc etc etc)
+    char message[20]; // message with information about the game
+    char* getMessage(); // get message about the game to show (example: "Suedes" "Movie playing..." "Suedes won" "King captured" etc etc etc)
     void undo();
     void playMovie();
     void changeAmbient(int ambientID);
     void changeGameMode(int modeID);
     void changeCamera(int viewID);
-    void changeTimeToPlay(string timeID);
+    void changeTimeToPlay(int timeID);
     
     
 private:

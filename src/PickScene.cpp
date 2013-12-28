@@ -70,7 +70,6 @@ void PickScene::init()
     light2->enable();
     light3->enable();
     
-    
     /* Animation */
     
     // Initialize update period and previousTime
@@ -137,7 +136,25 @@ void PickScene::init()
     
     currentAmbient = marbleAmbient; // default ambient
     
+    /* Interface */
+    message[0] = 'W';
+    message[1] = 'e';
+    message[2] = 'l';
+    message[3] = 'c';
+    message[4] = 'o';
+    message[5] = 'm';
+    message[6] = 'e';
     
+    for(int i = 7; i < 19; i++)
+    {
+        message[i] = ' ';
+    }
+    
+    message[19] = '\0';
+    
+    /* Cameras */
+    defaultCamera = activeCamera;
+    currentCamera = activeCamera;
     
     //request server init board and parse it
 	initBoard();
@@ -196,7 +213,7 @@ void PickScene::display()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
     
-	CGFscene::activeCamera->applyView();
+	activeCamera->applyView();
     
 	// Draw (and update) lights
 	light0->draw();
@@ -208,10 +225,34 @@ void PickScene::display()
 	//axis.draw();
     
     // Draw board base
-    /*glPushMatrix();
+    glPushMatrix();
     currentAmbient->tileGApp->apply();
-    boardBase->draw();
-    glPopMatrix();*/
+    //glRotated(90, 1, 0, 0);
+    //glScaled(3*4, 0, 3*2);
+    BoardTile* b0 = new BoardTile();
+    b0->setXPos(0);
+    b0->setYPos(0);
+    
+    BoardTile* b1 = new BoardTile();
+    b1->setXPos(1);
+    b1->setYPos(0);
+    
+    BoardTile* b2 = new BoardTile();
+    b2->setXPos(2);
+    b2->setYPos(0);
+    
+    BoardTile* b3 = new BoardTile();
+    b3->setXPos(3);
+    b3->setYPos(0);
+    
+    //glScalef(0.5, 0.5, 0.5);
+    //glTranslated(0, 0, 0);
+    //boardBase->draw();
+    b0->draw();
+    b1->draw();
+    b2->draw();
+    b3->draw();
+    glPopMatrix();
     
     // Draw ambient sky
     currentAmbient->skyApp->apply();
@@ -624,14 +665,18 @@ void PickScene::changeLight3()
     }
 }
 
-void PickScene::getMessage()
+char* PickScene::getMessage()
 {
-    // TODO
+    return this->message;
 }
 
 void PickScene::undo()
 {
     // TODO
+    message[0] = 'L';
+    message[1] = 'A';
+    message[2] = 'L';
+    message[3] = 'A';
 }
 
 void PickScene::playMovie()
@@ -662,10 +707,33 @@ void PickScene::changeGameMode(int modeID)
 
 void PickScene::changeCamera(int viewID)
 {
-    // TODO
+    activeCamera = defaultCamera;
+    
+        if(viewID == 1)
+        {
+            activeCamera->setX(0);
+            activeCamera->setY(-0.5);
+            activeCamera->setZ(0);
+            activeCamera->setRotation(1, 360);
+            //activeCamera->updateProjectionMatrix(10, 10);
+            activeCamera->applyView();
+            CGFscene::display();
+        }
+        else
+            if(viewID == 2)
+            {
+                activeCamera->setX(0);
+                activeCamera->setY(-10);
+                activeCamera->setZ(0);
+                activeCamera->setRotation(1, 360);
+                //activeCamera->updateProjectionMatrix(10, 10);
+                activeCamera->applyView();
+                CGFscene::display();
+            }
+
 }
 
-void PickScene::changeTimeToPlay(string timeID)
+void PickScene::changeTimeToPlay(int timeID)
 {
     // TODO
 }

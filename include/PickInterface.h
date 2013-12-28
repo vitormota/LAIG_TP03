@@ -2,7 +2,11 @@
 #define PickInterface_H
 
 #include "PickScene.h"
+#if _WIN32
+#include <CGFinterface.h>
+#else
 #include "CGFinterface.h"
+#endif
 
 class PickInterface: public CGFinterface {
 	public:
@@ -15,13 +19,13 @@ class PickInterface: public CGFinterface {
         void processKeyboard(unsigned char key, int x, int y);
         void initGUI();
         void processGUI(GLUI_Control *ctrl);
+        void display();
 
 		int x1,x2,y1,y2;
 		bool pos1,pos2;
     
-        int ambientID, modeID, viewID;
-        char timeID[1];
-        char currentMessage[15];
+        int ambientID, modeID, viewID, timeID;
+        char currentMessage[20];
 
 		PickScene *ps;
 };
