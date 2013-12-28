@@ -25,7 +25,8 @@ public:
 
 	bool socket_connect();
 	bool play(int xi, int yi, int xf, int yf, std::string board, std::string &newBoard);
-
+	void calculatePlay(std::string player, std::string board, int &xi, int &yi, int &xf, int &yf, std::string &newBoard);
+	bool gameEnd(std::string board);
 	std::string get_init_board();
 
 	void quit();
@@ -38,8 +39,8 @@ protected:
 #ifdef _WIN32
 	SOCKET opened_socket;
 #else
-    int fd;
-    struct sockaddr_in server_addr;
+	int fd;
+	struct sockaddr_in server_addr;
 #endif
 	void send_message(char *msg, int len);
 	void receive_message(char *msg);

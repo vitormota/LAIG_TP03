@@ -5,7 +5,7 @@
 using namespace std;
 
 PConnect::PConnect():connected(false){
-	this->port = 60070;
+	this->port = 60072;
 	this->address = "127.0.0.1";
 }
 
@@ -18,6 +18,59 @@ PConnect::~PConnect(){
 		close(fd);
 	}
 #endif
+}
+
+void PConnect::calculatePlay(string player, string board, int &xi, int &yi, int &xf, int &yf, string &newBoard)
+{
+	if( !connect )
+		return;
+	string s;
+
+	s= "calculate(" + player + ", " + board + ").\n";
+
+	send_message((char*)s.c_str(),s.length());
+
+	char ans[500];
+	receive_message(ans);
+
+	//Verificar se resposta valida
+	if( !validAnswer(ans) )
+	{
+		xi=0;
+		yi=0;
+		xf=0;
+		yf=0;
+		newBoard="invalid";
+		return;
+	}
+
+	xi = ans[3]-48;
+	yi = ans[5]-48;
+	xf = ans[7]-48;
+	yf = ans[9]-48;
+	xi--;
+	yi--;
+	xf--;
+	yf--;
+
+	newBoard = parse_board(ans,11);
+}
+
+bool PConnect::gameEnd(string board){
+	if( !connect )
+		return false;
+
+	string msg;
+
+	msg = "game_end(" + board + ").\n";
+	send_message((char*)msg.c_str(),msg.length());
+	char ans[500];
+	receive_message(ans);
+
+	if( validAnswer(ans) )
+		return true;
+
+	return false;
 }
 
 void PConnect::quit()
@@ -197,16 +250,16 @@ string PConnect::parse_board(char *ans,int pos){
 	unsigned int j=0;
 
 #ifndef _WIN32
-    for(unsigned int i=pos; i < strlen(ans) -2; i++,j++)
+	for(unsigned int i=pos; i < strlen(ans) -2; i++,j++)
 		board[j]=ans[i];
-    
+	
 
 	board[j] = '\0';
 #else
-    for(unsigned int i=pos; i < strlen(ans) -3; i++,j++)
+	for(unsigned int i=pos; i < strlen(ans) -3; i++,j++)
 		board[j]=ans[i];
-    
-    
+	
+	
 	board[j] = '\0';
 #endif
 	return string(board);

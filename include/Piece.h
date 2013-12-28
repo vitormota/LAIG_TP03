@@ -43,20 +43,20 @@ public:
 	CGFappearance *app;
 	CGFtexture *text;
 	GLUquadric *quad;
-    
-    Primitive* firstC;
-    Primitive* secondC;
-    Primitive* sph;
-    Primitive* bigsph;
-    Primitive* tor;
+	
+	Primitive* firstC;
+	Primitive* secondC;
+	Primitive* sph;
+	Primitive* bigsph;
+	Primitive* tor;
 
 	void elevate();
 	void un_elevate();
 	
 	bool exists;
-	char *id;
+	string id;
 	int xPos, yPos;
-    int type;
+	int type;
 	
 private:
 	

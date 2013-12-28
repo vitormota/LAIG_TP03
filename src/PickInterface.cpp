@@ -21,29 +21,29 @@ PickInterface::PickInterface(PickScene *ps){
 	y2 = 0;
 	pos1 = false;
 	pos2 = false;
-    ambientID = 0;
-    modeID = 0;
-    viewID = 0;
-    timeID = 0;
- 
-    for(int i = 0; i < 19; i++)
-    {
-    currentMessage[i] = ' ';
-    }
-    
-    currentMessage[19] = '\0';
+	ambientID = 0;
+	modeID = 0;
+	viewID = 0;
+	timeID = 0;
+
+	for(int i = 0; i < 19; i++)
+	{
+		currentMessage[i] = ' ';
+	}
+
+	currentMessage[19] = '\0';
 }
 
 void PickInterface::processKeyboard(unsigned char key, int x, int y)
 {
 	// Uncomment below if you would like to process the default keys (e.g. 's' for snapshot, 'Esc' for exiting, ...)
 	// CGFinterface::processKeyboard(key, x, y);
-    
+
 	switch(key)
 	{
-		case 'a':
+	case 'a':
 		{
-			
+
 			break;
 		}
 	}
@@ -51,153 +51,171 @@ void PickInterface::processKeyboard(unsigned char key, int x, int y)
 
 void PickInterface::initGUI()
 {
-    // Main panel
-    GLUI_Panel *mainPanel= addPanel("Game Options", 1);
-    mainPanel->set_alignment(GLUI_ALIGN_CENTER);
-    
-    // Lights
-    GLUI_Panel *lightsPanel= addPanelToPanel(mainPanel, "Lights", 1);
-    addCheckboxToPanel(lightsPanel, "North", ((PickScene *) ps)->light_0, 2);
-    addCheckboxToPanel(lightsPanel, "South", ((PickScene *) ps)->light_1, 3);
-    addCheckboxToPanel(lightsPanel, "East", ((PickScene *) ps)->light_2, 4);
-    addCheckboxToPanel(lightsPanel, "West", ((PickScene *) ps)->light_3, 5);
-    
-    addColumnToPanel(mainPanel);
-    
-    // Show Message
-    GLUI_Panel *msgPanel= addPanelToPanel(mainPanel, "Message", GLUI_PANEL_EMBOSSED);
-    msgPanel->set_alignment(GLUI_ALIGN_CENTER);
-    addStaticTextToPanel(msgPanel, ((PickScene *) ps)->getMessage());
-    
-    // Undo
-    GLUI_Panel *undoPanel= addPanelToPanel(mainPanel, "Undo", GLUI_PANEL_EMBOSSED);
-    undoPanel->set_alignment(GLUI_ALIGN_CENTER);
-    addButtonToPanel(undoPanel, "Undo", 7);
-    
-    // Play Movie
-    GLUI_Panel *gamePanel= addPanelToPanel(mainPanel, "Game Movie", GLUI_PANEL_EMBOSSED);
-    gamePanel->set_alignment(GLUI_ALIGN_CENTER);
-    addButtonToPanel(gamePanel, "Play", 8);
-    
-    // Ambients
-    GLUI_Panel *ambientsPanel= addPanelToPanel(mainPanel, "Ambient", GLUI_PANEL_EMBOSSED);
-    ambientsPanel->set_alignment(GLUI_ALIGN_CENTER);
-    GLUI_Listbox *ambientListBox = addListboxToPanel(ambientsPanel, "Choose ambient: ",&ambientID,9);
-    
-    ambientListBox->add_item(1,"Marble");
-    ambientListBox->add_item(2,"Jewels");
-    ambientListBox->add_item(3,"Fabric");
-    
-    addColumnToPanel(mainPanel);
-    
-    // Views
-    GLUI_Panel *viewPanel= addPanelToPanel(mainPanel, "View", GLUI_PANEL_EMBOSSED);
-    viewPanel->set_alignment(GLUI_ALIGN_CENTER);
-    GLUI_Listbox *viewListBox = addListboxToPanel(viewPanel, "Choose view: ",&viewID,10);
-    
-    viewListBox->add_item(1,"Default");
-    viewListBox->add_item(2,"Center");
-    viewListBox->add_item(3,"Top");
-    
-    // Time to Play
-    GLUI_Panel *timePanel= addPanelToPanel(mainPanel, "Play time", GLUI_PANEL_EMBOSSED);
-    timePanel->set_alignment(GLUI_ALIGN_CENTER);
-    GLUI_Spinner *timeSpinner = addSpinnerToPanel (timePanel, "Seconds:", 2, &timeID, 11);
-    timeSpinner->set_float_limits(5, 50); // the number of seconds to play is limited between [5, 50] seconds
-    
-    // Game Mode
-    GLUI_Panel *gameModePanel= addPanelToPanel(mainPanel, "Game Mode", GLUI_PANEL_EMBOSSED);
-    gameModePanel->set_alignment(GLUI_ALIGN_CENTER);
-    GLUI_RadioGroup *gameMode = addRadioGroupToPanel(gameModePanel, &modeID, 12);
-    
-    addRadioButtonToGroup(gameMode, "Player vs Computer");
-    addRadioButtonToGroup(gameMode, "Player vs Player");
+	// Main panel
+	GLUI_Panel *mainPanel= addPanel("Game Options", 1);
+	mainPanel->set_alignment(GLUI_ALIGN_CENTER);
+
+	// Lights
+	GLUI_Panel *lightsPanel= addPanelToPanel(mainPanel, "Lights", 1);
+	addCheckboxToPanel(lightsPanel, "North", ((PickScene *) ps)->light_0, 2);
+	addCheckboxToPanel(lightsPanel, "South", ((PickScene *) ps)->light_1, 3);
+	addCheckboxToPanel(lightsPanel, "East", ((PickScene *) ps)->light_2, 4);
+	addCheckboxToPanel(lightsPanel, "West", ((PickScene *) ps)->light_3, 5);
+
+	addButtonToPanel(mainPanel,"Start",0);
+
+	addColumnToPanel(mainPanel);
+
+	// Show Message
+	GLUI_Panel *msgPanel= addPanelToPanel(mainPanel, "Message", GLUI_PANEL_EMBOSSED);
+	msgPanel->set_alignment(GLUI_ALIGN_CENTER);
+	addStaticTextToPanel(msgPanel, ((PickScene *) ps)->getMessage());
+
+	// Undo
+	GLUI_Panel *undoPanel= addPanelToPanel(mainPanel, "Undo", GLUI_PANEL_EMBOSSED);
+	undoPanel->set_alignment(GLUI_ALIGN_CENTER);
+	addButtonToPanel(undoPanel, "Undo", 7);
+
+	// Play Movie
+	GLUI_Panel *gamePanel= addPanelToPanel(mainPanel, "Game Movie", GLUI_PANEL_EMBOSSED);
+	gamePanel->set_alignment(GLUI_ALIGN_CENTER);
+	addButtonToPanel(gamePanel, "Play", 8);
+
+	// Ambients
+	GLUI_Panel *ambientsPanel= addPanelToPanel(mainPanel, "Ambient", GLUI_PANEL_EMBOSSED);
+	ambientsPanel->set_alignment(GLUI_ALIGN_CENTER);
+	GLUI_Listbox *ambientListBox = addListboxToPanel(ambientsPanel, "Choose ambient: ",&ambientID,9);
+
+	ambientListBox->add_item(1,"Marble");
+	ambientListBox->add_item(2,"Jewels");
+	ambientListBox->add_item(3,"Fabric");
+
+	addColumnToPanel(mainPanel);
+
+	// Views
+	GLUI_Panel *viewPanel= addPanelToPanel(mainPanel, "View", GLUI_PANEL_EMBOSSED);
+	viewPanel->set_alignment(GLUI_ALIGN_CENTER);
+	GLUI_Listbox *viewListBox = addListboxToPanel(viewPanel, "Choose view: ",&viewID,10);
+
+	viewListBox->add_item(1,"Default");
+	viewListBox->add_item(2,"Center");
+	viewListBox->add_item(3,"Top");
+
+	// Time to Play
+	GLUI_Panel *timePanel= addPanelToPanel(mainPanel, "Play time", GLUI_PANEL_EMBOSSED);
+	timePanel->set_alignment(GLUI_ALIGN_CENTER);
+	GLUI_Spinner *timeSpinner = addSpinnerToPanel (timePanel, "Seconds:", 2, &timeID, 11);
+	timeSpinner->set_float_limits(5, 50); // the number of seconds to play is limited between [5, 50] seconds
+
+	// Game Mode
+	GLUI_Panel *gameModePanel= addPanelToPanel(mainPanel, "Game Mode", GLUI_PANEL_EMBOSSED);
+	gameModePanel->set_alignment(GLUI_ALIGN_CENTER);
+	GLUI_RadioGroup *gameMode = addRadioGroupToPanel(gameModePanel, &modeID, 12);
+
+	addRadioButtonToGroup(gameMode, "Player vs Player");
+	addRadioButtonToGroup(gameMode, "Player vs Moscovites");
+	addRadioButtonToGroup(gameMode, "Player vs Swedish");
+
+	//Game dificulty
+	GLUI_Panel *game_diff_panel = addPanelToPanel(mainPanel,"Dificulty", GLUI_PANEL_EMBOSSED);
+	game_diff_panel->set_alignment(GLUI_ALIGN_CENTER);
+
+	GLUI_RadioGroup *game_diff = addRadioGroupToPanel(game_diff_panel, &diff_id, 13);
+
+	addRadioButtonToGroup(game_diff, "Hard");
+	addRadioButtonToGroup(game_diff, "Normal");
+	addRadioButtonToGroup(game_diff, "Easy");
 }
 
 void PickInterface::display()
 {
-    memcpy(currentMessage, ((PickScene *) ps)->getMessage(), 20);
+	memcpy(currentMessage, ((PickScene *) ps)->getMessage(), 20);
 }
 
 void PickInterface::processGUI(GLUI_Control *ctrl)
 {
-	
-    printf ("GUI control id: %d\n  ",ctrl->user_id);
+
+	printf ("GUI control id: %d\n  ",ctrl->user_id);
 	switch (ctrl->user_id)
 	{
-		case 1:
+	case 0:
+		//start game
+		ps->pause = false;
+		ps->aiMove();
+		break;
+	case 1:
 		{
 			break;
 		};
-            
-        case 2:
+
+	case 2:
 		{
 			((PickScene *) ps)->changeLight0();
-            break;
-		};
-            
-        case 3:
-		{
-			((PickScene *) ps)->changeLight1();
-            break;
-		};
-            
-        case 4:
-		{
-			((PickScene *) ps)->changeLight2();
-            break;
-		};
-            
-        case 5:
-		{
-			((PickScene *) ps)->changeLight3();
-            break;
-		};
-            
-        case 6:
-		{
-            memcpy(currentMessage, ((PickScene *) ps)->getMessage(), 20);
 			break;
 		};
-            
-        case 7:
+
+	case 3:
+		{
+			((PickScene *) ps)->changeLight1();
+			break;
+		};
+
+	case 4:
+		{
+			((PickScene *) ps)->changeLight2();
+			break;
+		};
+
+	case 5:
+		{
+			((PickScene *) ps)->changeLight3();
+			break;
+		};
+
+	case 6:
+		{
+			memcpy(currentMessage, ((PickScene *) ps)->getMessage(), 20);
+			break;
+		};
+
+	case 7:
 		{
 			((PickScene *) ps)->undo();
 			break;
 		};
-            
-        case 8:
+
+	case 8:
 		{
 			((PickScene *) ps)->playMovie();
 			break;
 		};
-            
-        case 9:
+
+	case 9:
 		{
 			((PickScene *) ps)->changeAmbient(ambientID);
 			break;
 		};
-            
-        case 10:
+
+	case 10:
 		{
 			((PickScene *) ps)->changeCamera(viewID);
 			break;
 		};
-           
-        case 11:
+
+	case 11:
 		{
 			((PickScene *) ps)->changeTimeToPlay(timeID);
 			break;
 		};
-            
-		case 12:
+
+	case 12:
 		{
 			((PickScene *) ps)->changeGameMode(modeID);
 			break;
 		};
-           
+
 	};
-    
+
 }
 
 void PickInterface::processMouse(int button, int state, int x, int y) 
@@ -257,6 +275,7 @@ void PickInterface::performPicking(int x, int y)
 	// revert to render mode, get the picking results and process them
 	GLint hits;
 	hits = glRenderMode(GL_RENDER);
+	if(ps->pause) return;
 	processHits(hits, selectBuf);
 }
 
@@ -280,10 +299,13 @@ void PickInterface::processHits (GLint hits, GLuint buffer[])
 		for (int j=0; j < num; j++) 
 			ptr++;
 	}
-	
+
 	// if there were hits, the one selected is in "selected", and it consist of nselected "names" (integer ID's)
 	if (selected!=NULL)
 	{
+		if(ps->game_ended){
+			return;
+		}
 		// this should be replaced by code handling the picked object's ID's (stored in "selected"), 
 		// possibly invoking a method on the scene class and passing "selected" and "nselected"
 		printf("Picked ID's: ");
@@ -307,18 +329,30 @@ void PickInterface::processHits (GLint hits, GLuint buffer[])
 				if(ps->movePiece(x1,y1,x2,y2)){
 					//move was a success, clear all
 					pos1=false;
+					x1 = -1;
+					x2 = -1;
+					y1 = -1;
+					y2 = -1;
 				}
 			}else{
 				//piece found on loc 2 so
 				ps->un_elevatePiece();
 				ps->elevatePiece(x2,y2);
+				x1 = x2;
+				y1 = y2;
+				x2 = -1;
+				y2 = -1;
 			}
 
-			
+
 		}
 
-		for (int i=0; i<nselected; i++)
-			printf("%d ",selected[i]);
+		Piece *p = ps->getPiece(selected[1],selected[0]);
+		if(p){
+			printf("\nSelected piece: %s - %i - %i\n",p->id.c_str(),p->xPos,p->yPos);
+		}
+
+		printf("%d %d",selected[1],selected[0]);
 		printf("\n");
 	}
 	else
