@@ -116,6 +116,7 @@ public:
 	void aiMove();
 	virtual void update(unsigned long);
 	Piece* getPiece(int x,int y);
+	void restart();
 
 private:
 	CGFlight* light0;
@@ -126,9 +127,8 @@ private:
 	stack<std::string> *game_states;
 	stack<std::string> *movie_boards;
 	void changePlayer();
-	void redrawBoard();
 	Piece* getPiece(string id);
-
+	void redrawBoard();
 	void dumpPositions();
 
 	/*

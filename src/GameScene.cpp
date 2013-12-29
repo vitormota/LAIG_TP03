@@ -24,6 +24,8 @@ class PrologBadResponse{};
 
 void GameScene::init()
 {
+
+
 	//DEBUG -- TODO change this var on new game options
 	movie_step = 1000;
 	elapse_time = 0;
@@ -198,6 +200,18 @@ void GameScene::init()
 	/* Cameras */
 	defaultCamera = activeCamera;
 	currentCamera = activeCamera;
+
+	// Create board tiles
+	for (int y = 0; y < NUM_ROWS; y++)
+	{
+		for (int x = 0; x < NUM_COLS; x++)
+		{
+			BoardTile* tile = new BoardTile();
+			tile->setXPos(x);
+			tile->setYPos(y);
+			this->boardTiles.push_back(tile);
+		}
+	}
 
 	//request server init board and parse it
 	initBoard();
@@ -433,17 +447,7 @@ void GameScene::initBoard(){
 	//game_states->push(board);
 	redrawBoard();
 
-	// Create board tiles
-	for (int y = 0; y < NUM_ROWS; y++)
-	{
-		for (int x = 0; x < NUM_COLS; x++)
-		{
-			BoardTile* tile = new BoardTile();
-			tile->setXPos(x);
-			tile->setYPos(y);
-			this->boardTiles.push_back(tile);
-		}
-	}
+	
 }
 
 void GameScene::aiMove(){
@@ -654,6 +658,7 @@ bool GameScene::emptySpace(int x,int y){
 }
 
 bool GameScene::movePiece(int xi,int yi,int xf,int yf){
+	if(game_ended) return false;
 	bool success = false;
 	string newBoard;
 	if(con->play(xi,yi,xf,yf,board,newBoard)){
@@ -664,7 +669,6 @@ bool GameScene::movePiece(int xi,int yi,int xf,int yf){
 		m.yf = yf;
 		m.selected = selected_piece;
 		if(!movie) moves.push_back(m);
-		if(!movie) game_ended = isGameFinished();
 		success = true;
 
 		Pair p(xi,yi);
@@ -700,6 +704,7 @@ bool GameScene::movePiece(int xi,int yi,int xf,int yf){
 		aiMove();
 		dumpPositions();
 	}
+	if(!movie) game_ended = isGameFinished();
 	return success;
 }
 
@@ -795,6 +800,8 @@ char* GameScene::getMessage()
 
 void GameScene::undo()
 {
+	pause = game_ended = false;
+
 	// TODO
 	strcpy(message,"Cheater...");
 
@@ -1015,3 +1022,16 @@ void GameScene::update(unsigned long millis){
 	}
 }
 
+void GameScene::restart(){
+	movie_step = 1000;
+	elapse_time = 0;
+	play_time = 20000;
+	turn = 'm';
+	pause = true;
+	game_ended = false;
+	movie = false;
+	movie_boards = new stack<string>;
+	time = 0;
+	game_states = new stack<string>;
+	initBoard();
+}

@@ -72,9 +72,10 @@ void GameInterface::initGUI()
 	// Show Message
 	GLUI_Panel *msgPanel= addPanelToPanel(mainPanel, "Message", GLUI_PANEL_EMBOSSED);
 	msgPanel->set_alignment(GLUI_ALIGN_CENTER);
-	addStaticTextToPanel(msgPanel, currentMessage);
+	GLUI_StaticText *text = addStaticTextToPanel(msgPanel, currentMessage);
 	//GLUI_TextBox(msgPanel, ((GameScene *) gs)->getMessage());
-	//GLUI_StaticText *text = GLUI::add_statictext_to_panel(msgPanel, ((GameScene *) gs)->getMessage());
+	//text->set_text("text");
+	//GLUI_StaticText *text = add_statictext_to_panel(msgPanel, ((GameScene *) gs)->getMessage());
 	//GLUI_StaticText *text= GLUI::add_statictext_to_panel(msgPanel,((GameScene *) gs)->getMessage());
 	
 	// Start
@@ -176,6 +177,7 @@ void GameInterface::processGUI(GLUI_Control *ctrl)
 			
 		case 7:
 		{   //start game
+			gs->restart();
 			gs->pause = false;
 			gs->aiMove();
 			break;
