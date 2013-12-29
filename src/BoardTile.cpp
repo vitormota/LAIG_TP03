@@ -1,11 +1,3 @@
-//
-//  BoardTile.cpp
-//  LAIG - P2
-//
-//  Created by Maria Araújo on 17/12/13.
-//  Copyright (c) 2013 me. All rights reserved.
-//
-
 #include "BoardTile.h"
 #define BOARD_PIECE_SIZE 1
 
@@ -17,7 +9,7 @@ BoardTile::BoardTile() {
 }
 
 BoardTile::~BoardTile() {
-    
+    delete(r);
 }
 
 void BoardTile::draw()

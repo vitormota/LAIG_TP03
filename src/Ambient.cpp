@@ -1,11 +1,3 @@
-//
-//  Ambient.cpp
-//  LAIG - P3
-//
-//  Created by Maria Araújo on 27/12/13.
-//  Copyright (c) 2013 me. All rights reserved.
-//
-
 #include "Ambient.h"
 
 Ambient::Ambient(string id)
@@ -96,7 +88,6 @@ void Ambient::apply()
 
 void Ambient::drawSky()
 {
-    
     glPushMatrix();
     skyApp->apply();
     glScaled(5, 5, 5);

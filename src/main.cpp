@@ -24,37 +24,37 @@
 #include <iostream>
 
 //project includes
-#include "PickScene.h"
-#include "PickInterface.h"
+#include "GameScene.h"
+#include "GameInterface.h"
 #include "PConnect.h"
 //end
 
 using namespace std;
 
 //------- DECLARATIONS
-PickScene *ps;
+GameScene *gs;
 PConnect *con;
-PickInterface *pi;
+GameInterface *gi;
 //------- END DEC'S
 
 int main(int argc, char* argv[]) {
 	
 	CGFapplication app = CGFapplication();
 
-	ps = new PickScene();
-	pi = new PickInterface(ps);
+	gs = new GameScene();
+	gi = new GameInterface(gs);
 
 	try {
 
 		con = new PConnect();
-		ps->con = con;
+		gs->con = con;
 		if(!con->socket_connect()){
 			throw exception();
 		}
 
 		app.init(&argc, argv);
-		app.setScene(ps);
-		app.setInterface(pi);
+		app.setScene(gs);
+		app.setInterface(gi);
 		app.run();
 	}
 	catch(GLexception& ex) {

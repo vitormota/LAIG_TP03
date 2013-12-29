@@ -1,8 +1,3 @@
-//
-//  Primitive.cpp
-//  LAIG - P1
-//
-
 #include "Primitive.h"
 #include "math.h"
 

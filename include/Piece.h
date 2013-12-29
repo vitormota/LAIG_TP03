@@ -2,8 +2,8 @@
 #define PIECE_H
 
 /*
-	Defines a simple game piece
-*/
+ Defines a simple game piece
+ */
 
 #include <map>
 #include "Primitive.h"
@@ -23,51 +23,47 @@
 //end
 
 class Piece : public CGFobject{
-
+    
 public:
-
+    
 	Piece();
-	Piece(int slices,int stacks,float radius);
+	Piece(int slices, int stacks, float radius);
 	~Piece();
 	void setXPos(int x);
 	void setYPos(int y);
+    void setCurrentX(double currentX);
+    void setCurrentY(double currentY);
 	int getXPos();
 	int getYPos();
-	
+    
+	void elevate();
+	void lower();
 	void draw();
-	char player;
-
-	bool king;
-	float radius,radius_2,height;
+    
+	float radius, radius_2, height;
 	int slices,stacks;
-	CGFappearance *app;
-	CGFtexture *text;
-	GLUquadric *quad;
-	
-	Primitive* firstC;
+    int xPos, yPos;
+	int type;
+    bool king;
+    bool animating;
+    char player;
+	bool exists;
+    bool captured;
+	string id;
+    GLUquadric *quad;
+    Primitive* firstC;
 	Primitive* secondC;
 	Primitive* sph;
 	Primitive* bigsph;
 	Primitive* tor;
-
-	void elevate();
-	void un_elevate();
-	
-	bool exists;
-	string id;
-	int xPos, yPos;
-	int type;
 	
 private:
+    double currentX, currentY;
 	
-
+    
 protected:
-
 	void drawBase();
 	float elevation;
-
+    
 };
-
-
-
 #endif

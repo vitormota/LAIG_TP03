@@ -1,5 +1,5 @@
-#ifndef PICKSCENE_H
-#define PICKSCENE_H
+#ifndef GAMESCENE_H
+#define GAMESCENE_H
 
 #include "CGFscene.h"
 #include "CGFcamera.h"
@@ -7,9 +7,8 @@
 #include "BoardTile.h"
 #include "PConnect.h"
 #include "Piece.h"
-#include "Animation.h"
 #include "Ambient.h"
-#include "Rect.h"
+//#include "Rect.h"
 #include <string.h>
 #include <stack>
 #include <vector>
@@ -37,16 +36,13 @@ public:
 
 };
 
-class PickScene : public CGFscene
+class GameScene : public CGFscene
 {
 
 public:
 	void init();
 	void display();
-	~PickScene();
-
-	//game mode
-	game_mode gm;
+	~GameScene();
 
 	/* Connection */
 	PConnect *con;
@@ -64,34 +60,34 @@ public:
 	void changeLight3();
 
 	/* Animation */
-	Animation* anim;
-	float previousTime;
 	bool animatePiece;
-	void update(unsigned long time);
+    void pieceAnimation(int xi, int yi, int xf, int yf, int dx, int dy);
+    double dx, dy, currentX, currentY;
 
 	/* Ambient */
 	vector<Ambient*> ambients;
 	Ambient* currentAmbient;
-	Rect* boardBase;
 
 	bool pause;
 
 	/* Game */
 	Piece* p;
-	Piece *selected_piece;
+	Piece* selected_piece;
 	bool pickPiece; // true if picking is active for pieces
 	bool pickBoardTile; // true if picking is active for board tiles
-	std::map<Pair,int> positions;
+	bool game_ended;
+    std::map<Pair,int> positions;
 	string board;
 	vector<Piece*> boardPieces;
 	vector<BoardTile*> boardTiles;
 	CGFcamera* defaultCamera;
 	CGFcamera* currentCamera;
+	game_mode gm; //game mode
 
 	void initBoard();
 	bool movePiece(int xi, int yi, int xf, int yf);
 	bool elevatePiece(int x, int y);
-	bool un_elevatePiece();
+	bool lowerPiece();
 	bool emptySpace(int x,int y);
 	bool isGameFinished();
 
@@ -106,23 +102,19 @@ public:
 	void changeGameMode(int modeID);
 	void changeCamera(int viewID);
 	void changeTimeToPlay(int timeID);
-
+    void aiMove();
 	Piece* getPiece(int x,int y);
-
-	void aiMove();
-	bool game_ended;
 
 private:
 	CGFlight* light0;
 	CGFlight* light1;
 	CGFlight* light2;
 	CGFlight* light3;
-	CGFobject* obj;
 	BoardTile* tile;
 	stack<std::string> *game_states;
 
 	void changePlayer();
-	void reDrawBoard();
+	void redrawBoard();
 	Piece* getPiece(string id);
 
 	void dumpPositions();
