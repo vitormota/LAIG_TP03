@@ -36,6 +36,11 @@ public:
 
 };
 
+typedef struct Move{
+	int xi,xf,yi,yf;
+	Piece *selected;
+};
+
 class GameScene : public CGFscene
 {
 
@@ -61,14 +66,17 @@ public:
 
 	/* Animation */
 	bool animatePiece;
-    void pieceAnimation(int xi, int yi, int xf, int yf, int dx, int dy);
-    double dx, dy, currentX, currentY;
+	void pieceAnimation(int xi, int yi, int xf, int yf, int dx, int dy);
+	double dx, dy, currentX, currentY;
 
 	/* Ambient */
 	vector<Ambient*> ambients;
 	Ambient* currentAmbient;
 
 	bool pause;
+	bool movie;
+
+	int time;
 
 	/* Game */
 	Piece* p;
@@ -76,14 +84,17 @@ public:
 	bool pickPiece; // true if picking is active for pieces
 	bool pickBoardTile; // true if picking is active for board tiles
 	bool game_ended;
-    std::map<Pair,int> positions;
+	std::map<Pair,int> positions;
 	string board;
 	vector<Piece*> boardPieces;
+	vector<Move> moves;
 	vector<BoardTile*> boardTiles;
 	CGFcamera* defaultCamera;
 	CGFcamera* currentCamera;
 	game_mode gm; //game mode
-
+	int play_time;
+	unsigned long elapse_time;
+	unsigned long movie_step;
 	void initBoard();
 	bool movePiece(int xi, int yi, int xf, int yf);
 	bool elevatePiece(int x, int y);
@@ -102,7 +113,8 @@ public:
 	void changeGameMode(int modeID);
 	void changeCamera(int viewID);
 	void changeTimeToPlay(int timeID);
-    void aiMove();
+	void aiMove();
+	virtual void update(unsigned long);
 	Piece* getPiece(int x,int y);
 
 private:
@@ -112,7 +124,7 @@ private:
 	CGFlight* light3;
 	BoardTile* tile;
 	stack<std::string> *game_states;
-
+	stack<std::string> *movie_boards;
 	void changePlayer();
 	void redrawBoard();
 	Piece* getPiece(string id);

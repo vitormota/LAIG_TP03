@@ -5,7 +5,7 @@
 using namespace std;
 
 PConnect::PConnect():connected(false){
-	this->port = 60070;
+	this->port = 60072;
 	this->address = "127.0.0.1";
 }
 

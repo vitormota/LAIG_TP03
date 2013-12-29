@@ -25,154 +25,160 @@ class PrologBadResponse{};
 void GameScene::init()
 {
 	//DEBUG -- TODO change this var on new game options
+	movie_step = 1000;
+	elapse_time = 0;
+	play_time = 20000;
 	turn = 'm';
 	pause = true;
 	gm = pvp;
 	game_ended = false;
-    
+	movie = false;
+	movie_boards = new stack<string>;
+	time = 0;
+
 	game_states = new stack<string>;
-    
+
 	// Apply transformations corresponding to the camera position relative to the origin
-    
+
 	// normal init, no changes needed
-    
+
 	// Enables lighting computations
 	glEnable(GL_LIGHTING);
-    
+
 	// Sets up some lighting parameters
 	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, CGFlight::background_ambient);  // Define ambient light
-    
+
 	// Defines a default normal
 	glNormal3f(0,0,1);
-    
+
 	/* Ilumination */
 	light_0 = new int;
 	light_1 = new int;
 	light_2 = new int;
 	light_3 = new int;
-    
+
 	*light_0 = 1;
 	*light_1 = 1;
 	*light_2 = 1;
 	*light_3 = 1;
-    
+
 	// Declare and enable lights
 	float light0_pos[4] = {-6.0, 6.0, -6.0, 1.0};
 	float light1_pos[4] = {6.0, 6.0, 6.0, 1.0};
 	float light2_pos[4] = {6.0, 6.0, -6.0, 1.0};
 	float light3_pos[4] = {-6.0, 6.0, 6.0, 1.0};
-    
+
 	light0 = new CGFlight(GL_LIGHT0, light0_pos);
 	light1 = new CGFlight(GL_LIGHT1, light1_pos);
 	light2 = new CGFlight(GL_LIGHT2, light2_pos);
 	light3 = new CGFlight(GL_LIGHT3, light3_pos);
-    
+
 	light0->enable();
 	light1->enable();
 	light2->enable();
 	light3->enable();
-    
+
 	/* Animation */
-    
+
 	// Initialize update period and previousTime
 	setUpdatePeriod(100);
 	animatePiece = false;
-    currentX = 0;
-    currentY = 0;
-    
+	currentX = 0;
+	currentY = 0;
+
 	/* Ambients */
-    
+
 	// Marble ambient
-    
+
 #ifdef __APPLE__
 	Ambient* marbleAmbient = new Ambient("MARBLE");
 	marbleAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_MARBLE.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
-    
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_MARBLE.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_MARBLE.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_MARBLE.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
+
 	marbleAmbient->setPiecesType(0);
 	ambients.push_back(marbleAmbient);
-    
-    
+
+
 	// Jewels Ambient
 	Ambient* jewelsAmbient = new Ambient("JEWELS");
 	jewelsAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_JEWELS.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_JEWELS.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLUE_JEWELS.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_JEWELS.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
-    
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_JEWELS.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLUE_JEWELS.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_JEWELS.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
+
 	jewelsAmbient->setPiecesType(1);
 	ambients.push_back(jewelsAmbient);
-    
+
 	// Fabric Ambient
 	Ambient* fabricAmbient = new Ambient("FABRIC");
 	fabricAmbient->setTextures("/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_FABRIC.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_FABRIC.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/FLOWERS_FABRIC.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_FABRIC.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
-                               "/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_FABRIC.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/FLOWERS_FABRIC.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/SKY_FABRIC.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/G_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/WHITE_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/BLACK_WOOD.jpg",
+		"/Users/mj/Documents/Disciplinas/LAIG/3º Trabalho/LAIG - P3/data/RED_WOOD.jpg");
 #else
-    
+
 	Ambient* marbleAmbient = new Ambient("MARBLE");
 	marbleAmbient->setTextures("data/RED_MARBLE.jpg",
-                               "data/WHITE_MARBLE.jpg",
-                               "data/BLACK_MARBLE.jpg",
-                               "data/SKY_MARBLE.jpg",
-                               "data/G_WOOD.jpg",
-                               "data/WHITE_WOOD.jpg",
-                               "data/BLACK_WOOD.jpg",
-                               "data/RED_WOOD.jpg");
-    
+		"data/WHITE_MARBLE.jpg",
+		"data/BLACK_MARBLE.jpg",
+		"data/SKY_MARBLE.jpg",
+		"data/G_WOOD.jpg",
+		"data/WHITE_WOOD.jpg",
+		"data/BLACK_WOOD.jpg",
+		"data/RED_WOOD.jpg");
+
 	marbleAmbient->setPiecesType(0);
 	ambients.push_back(marbleAmbient);
-    
-    
+
+
 	// Jewels Ambient
 	Ambient* jewelsAmbient = new Ambient("JEWELS");
 	jewelsAmbient->setTextures("data/RED_JEWELS.jpg",
-                               "data/WHITE_JEWELS.jpg",
-                               "data/BLUE_JEWELS.jpg",
-                               "data/SKY_JEWELS.jpg",
-                               "data/G_WOOD.jpg",
-                               "data/WHITE_WOOD.jpg",
-                               "data/BLACK_WOOD.jpg",
-                               "data/RED_WOOD.jpg");
-    
+		"data/WHITE_JEWELS.jpg",
+		"data/BLUE_JEWELS.jpg",
+		"data/SKY_JEWELS.jpg",
+		"data/G_WOOD.jpg",
+		"data/WHITE_WOOD.jpg",
+		"data/BLACK_WOOD.jpg",
+		"data/RED_WOOD.jpg");
+
 	jewelsAmbient->setPiecesType(1);
 	ambients.push_back(jewelsAmbient);
-    
+
 	// Fabric Ambient
 	Ambient* fabricAmbient = new Ambient("FABRIC");
 	fabricAmbient->setTextures("data/RED_FABRIC.jpg",
-                               "data/WHITE_FABRIC.jpg",
-                               "data/FLOWERS_FABRIC.jpg",
-                               "data/SKY_FABRIC.jpg",
-                               "data/G_WOOD.jpg",
-                               "data/WHITE_WOOD.jpg",
-                               "data/BLACK_WOOD.jpg",
-                               "data/RED_WOOD.jpg");
-    
+		"data/WHITE_FABRIC.jpg",
+		"data/FLOWERS_FABRIC.jpg",
+		"data/SKY_FABRIC.jpg",
+		"data/G_WOOD.jpg",
+		"data/WHITE_WOOD.jpg",
+		"data/BLACK_WOOD.jpg",
+		"data/RED_WOOD.jpg");
+
 #endif
-    
+
 	fabricAmbient->setPiecesType(2);
 	ambients.push_back(fabricAmbient);
-    
-    
+
+
 	currentAmbient = marbleAmbient; // default ambient
-    
+
 	/* Interface */
 	message[0] = 'W';
 	message[1] = 'e';
@@ -181,80 +187,80 @@ void GameScene::init()
 	message[4] = 'o';
 	message[5] = 'm';
 	message[6] = 'e';
-    
+
 	for(int i = 7; i < 19; i++)
 	{
 		message[i] = ' ';
 	}
-    
+
 	message[19] = '\0';
-    
+
 	/* Cameras */
 	defaultCamera = activeCamera;
 	currentCamera = activeCamera;
-    
+
 	//request server init board and parse it
 	initBoard();
-    
+
 }
 
 void GameScene::display()
 {
-    
+
 	if(game_ended){
 		strcpy(message,"Game Over");
 	}
-    
+
 	// TEST THE PICKING -> To switch from picking the board tiles or the board pieces
 	this->pickBoardTile = true;
 	this->pickPiece = true;
-    
+
 	// ---- BEGIN Background, camera and axis setup
-    
+
 	// Clear image and depth buffer everytime we update the scene
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    
+
 	// Initialize Model-View matrix as identity (no transformation
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-    
+
 	activeCamera->applyView();
-    
+
 	// Draw (and update) lights
-	light0->draw();
+	/*light0->draw();
 	light1->draw();
 	light2->draw();
-	light3->draw();
-    
+	light3->draw();*/
+
 	// Draw axis
 	//axis.draw();
-    
+
 	// Draw ambient sky
 	currentAmbient->skyApp->apply();
 	currentAmbient->drawSky();
-    
+
 	if(currentAmbient->getPiecesType() == 2)
 	{
 		currentAmbient->kApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
 		currentAmbient->sApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
 		currentAmbient->mApp->setTextureWrap(GL_REPEAT, GL_REPEAT);
 	}
-    
+
 	// Set pieces type
 	for(int p = 0; p < boardPieces.size(); p++)
 	{
 		boardPieces[p]->type = currentAmbient->getPiecesType();
 	}
-    
+
 	// ---- END Background, camera and axis setup
-    
-    
+
+
 	// ---- BEGIN feature demos
-    
+
 	//// scale down a bit
 	glPushMatrix();
 	glScalef(0.5, 0.5, 0.5);
-    
+
 	// Picking only the pieces
 	if((this->pickPiece == true) && (this->pickBoardTile == false))
 	{
@@ -262,15 +268,15 @@ void GameScene::display()
 		{
 			glPushName(boardPieces[i]->getYPos());
 			glPushName(boardPieces[i]->getXPos());
-            
-            if(boardPieces[i]->exists)
-            {
-            drawPiece(i);
-            }
-			
-            glPopName();
+
+			if(boardPieces[i]->exists)
+			{
+				drawPiece(i);
+			}
+
 			glPopName();
-            
+			glPopName();
+
 		}
 	}
 	// Picking only the board tiles
@@ -280,20 +286,20 @@ void GameScene::display()
 		{
 			glPushName(boardTiles[i]->getYPos());
 			glPushName(boardTiles[i]->getXPos());
-            
+
 			drawBoardTile(i);
-            
+
 			glPopName();
 			glPopName();
-            
+
 		}
-        
+
 		for(int j = 0; j < boardPieces.size();j++)
 		{
 			if(boardPieces[j]->exists)
-            {
-            drawPiece(j);
-            }
+			{
+				drawPiece(j);
+			}
 		}
 	}
 	// Picking pieces and board tiles
@@ -303,130 +309,130 @@ void GameScene::display()
 		{
 			glPushName(boardPieces[i]->getYPos());
 			glPushName(boardPieces[i]->getXPos());
-            
-            if(boardPieces[i]->exists)
-            {
-			drawPiece(i);
-            }
-            
+
+			if(boardPieces[i]->exists)
+			{
+				drawPiece(i);
+			}
+
 			glPopName();
 			glPopName();
 		}
-        
+
 		for(int j = 0; j < boardTiles.size();j++)
 		{
 			glPushName(boardTiles[j]->getYPos());
 			glPushName(boardTiles[j]->getXPos());
-            
+
 			drawBoardTile(j);
-            
+
 			glPopName();
 			glPopName();
 		}
-        
+
 	}
 	// Only draw the board without picking
 	else{
 		for(int i = 0; i < boardPieces.size();i++)
 		{
 			if(boardPieces[i]->exists)
-            {
-            drawPiece(i);
-            }
+			{
+				drawPiece(i);
+			}
 		}
-        
+
 		for(int j = 0; j < boardTiles.size();j++)
 		{
 			drawBoardTile(j);
 		}
-        
+
 	}
-    
-    
+
+
 	// draw auxiliary board
-    int c = 0;
+	int c = 0;
 	for(int k = 0; k < boardPieces.size(); k++)
 	{
 		Piece* currentPiece = boardPieces[k];
-        
+
 		if(!currentPiece->exists)
 		{
 			/*glPushMatrix();
 			glTranslated(5, 5, 5); // TODO -> aqui tem q ter uma variável para a peça aparecer ao lado da anterior .. ou seja .. o x ou z tem q aumentar para elas aparecerem umas ao lado das outras
-			
-            currentPiece->setXPos(0);
-            currentPiece->setYPos(0);
-            glTranslated(3*c, 0, 7);
-            drawPiece(k);
-            drawBoardTile(k);
+
+			currentPiece->setXPos(0);
+			currentPiece->setYPos(0);
+			glTranslated(3*c, 0, 7);
+			drawPiece(k);
+			drawBoardTile(k);
 			glPopMatrix();
-            c++;*/
+			c++;*/
 		}
 	}
-    
+
 	glPopMatrix();
-    
+
 	// ---- END feature demos
-    
+
 	// glutSwapBuffers() will swap pointers so that the back buffer becomes the front buffer and vice-versa
 	glutSwapBuffers();
 }
 
 void GameScene::pieceAnimation(int xi, int yi, int xf, int yf, int dx, int dy)
 {
-    animatePiece = true;
-    int pos = 0;
-    
-    for(int j = 0; j < boardPieces.size(); j++)
-    {
-        if((boardPieces[j]->getXPos() == xi) && (boardPieces[j]->getYPos() == yi))
-        {
-            pos = j;
-            break;
-        }
-    }
-    
-    if((animatePiece == false) || (((currentX < xf*9/3-13.5+1.5) && (dx < 0)) || ((currentX > xf*9/3-13.5+1.5) && (dx > 0)) || ((currentY < yf*9/3-13.5+1.5) && (dy < 0)) || ((currentY > yf*9/3-13.5+1.5) && (dy > 0))))
+	animatePiece = true;
+	int pos = 0;
+
+	for(int j = 0; j < boardPieces.size(); j++)
+	{
+		if((boardPieces[j]->getXPos() == xi) && (boardPieces[j]->getYPos() == yi))
+		{
+			pos = j;
+			break;
+		}
+	}
+
+	if((animatePiece == false) || (((currentX < xf*9/3-13.5+1.5) && (dx < 0)) || ((currentX > xf*9/3-13.5+1.5) && (dx > 0)) || ((currentY < yf*9/3-13.5+1.5) && (dy < 0)) || ((currentY > yf*9/3-13.5+1.5) && (dy > 0))))
 	{
 		animatePiece = false;
-        boardPieces[pos]->animating = false;
-        currentY = 0;
-        currentX = 0;
+		boardPieces[pos]->animating = false;
+		currentY = 0;
+		currentX = 0;
 	}
-    else{
-        glPushMatrix();
-        currentX = currentX + (dx/30.0);
-        currentY = currentY + (dy/30.0);
-        
-        boardPieces[pos]->setCurrentX(currentX);
-        boardPieces[pos]->setCurrentY(currentY);
-        boardPieces[pos]->animating = true;
-        if(boardPieces[pos]->exists)
-        {
-        boardPieces[pos]->draw();
-        }
+	else{
+		glPushMatrix();
+		currentX = currentX + (dx/30.0);
+		currentY = currentY + (dy/30.0);
+
+		boardPieces[pos]->setCurrentX(currentX);
+		boardPieces[pos]->setCurrentY(currentY);
+		boardPieces[pos]->animating = true;
+		if(boardPieces[pos]->exists)
+		{
+			boardPieces[pos]->draw();
+		}
 		glPopMatrix();
-    }
+	}
 }
 
 GameScene::~GameScene()
 {
 	delete(p);
-    delete(selected_piece);
-    delete(game_states);
-    delete(tile);
+	delete(selected_piece);
+	delete(game_states);
+	delete(tile);
 	delete(light0);
-    delete(light1);
-    delete(light2);
-    delete(light3);
-   
+	delete(light1);
+	delete(light2);
+	delete(light3);
+
 }
 
 void GameScene::initBoard(){
 	board = con->get_init_board();
-	game_states->push(board);
+	//game_states->push(board);
 	redrawBoard();
-    
+
 	// Create board tiles
 	for (int y = 0; y < NUM_ROWS; y++)
 	{
@@ -441,18 +447,19 @@ void GameScene::initBoard(){
 }
 
 void GameScene::aiMove(){
+	if(game_ended) return;
 	string player;
 	switch(gm){
-        case pvp:
-            return;
-        case pvs:
-            if(turn == 'm') return;
-            player = "swedish";
-            break;
-        case pvm:
-            if(turn == 's') return;
-            player = "moscov";
-            break;
+	case pvp:
+		return;
+	case pvs:
+		if(turn == 'm') return;
+		player = "swedish";
+		break;
+	case pvm:
+		if(turn == 's') return;
+		player = "moscov";
+		break;
 	}
 	string newBoard;
 	int xi,xf,yi,yf;
@@ -461,37 +468,44 @@ void GameScene::aiMove(){
 		//something went wrong so quit and exit
 		throw PrologBadResponse();
 	}else{
+		Move m;
+		m.xi = xi;
+		m.xf = xf;
+		m.yi = yi;
+		m.yf = yf;
+		m.selected = getPiece(xi,yi);
+		if(!movie) moves.push_back(m);
 		strcpy(message,"PC has some moves...");
 		//apply changes
 		Pair p(xi,yi);
 		Pair pf(xf,yf);
-        
-        // animation
-        dx = xf - xi;
-        dy = yf - yi;
-        
-        animatePiece = true;
-        
-        currentX = xi*9/3-13.5+1.5;
-        currentY = yi*9/3-13.5+1.5;
-        
-        while(animatePiece)
-        {
-            pieceAnimation(xi, yi, xf, yf, dx, dy);
-            display();
-        }
-        
+
+		// animation
+		dx = xf - xi;
+		dy = yf - yi;
+
+		animatePiece = true;
+
+		currentX = xi*9/3-13.5+1.5;
+		currentY = yi*9/3-13.5+1.5;
+
+		while(animatePiece)
+		{
+			pieceAnimation(xi, yi, xf, yf, dx, dy);
+			display();
+		}
+
 		int pos = positions[p];
 		boardPieces[pos]->xPos = xf;
 		boardPieces[pos]->yPos = yf;
 		positions.erase(p);
 		positions[pf] = pos;
-		game_states->push(board);
+		if(!movie) game_states->push(board);
 		board = newBoard;
 		check_pieces();
 		changePlayer();
 	}
-	game_ended = isGameFinished();
+	if(!movie) game_ended = isGameFinished();
 }
 
 void GameScene::drawBoardTile(int j)
@@ -500,7 +514,7 @@ void GameScene::drawBoardTile(int j)
 	// rei -> 40
 	// m ->  3,  4,  5, 13, 27, 35, 36, 37, 43, 44, 45, 53, 67, 75, 76, 77
 	// s -> 22, 31, 38, 39, 41, 42, 49, 58
-    
+
 	if((j == 3) || (j == 4) || (j == 5) || (j == 13) || (j == 27) || (j == 35) || (j == 36) || (j == 37) || (j == 43) || (j == 44) || (j == 45) || (j == 53) || (j == 67) || (j == 75) || (j == 76) || (j == 77))
 	{
 		currentAmbient->tileMApp->apply();
@@ -517,14 +531,14 @@ void GameScene::drawBoardTile(int j)
 	{
 		currentAmbient->tileGApp->apply();
 	}
-    
+
 	boardTiles[j]->draw();
-    
+
 }
 
 void GameScene::drawPiece(int i)
 {
-    
+
 	// apply appearances
 	if(boardPieces[i]->king)
 	{
@@ -540,8 +554,8 @@ void GameScene::drawPiece(int i)
 			{
 				currentAmbient->mApp->apply();
 			}
-    boardPieces[i]->draw();
-    
+			boardPieces[i]->draw();
+
 }
 
 bool GameScene::lowerPiece(){
@@ -566,65 +580,65 @@ bool GameScene::elevatePiece(int x,int y){
 		if(p && p->player == turn){
 			res = true;
 			selected_piece = p;
-            
-            // animation TODO -> WORK IN PROGRESS
-            /*if(p->type == 0)
-            {
-            dz =  - zi;
-            }
-            else
-                if(p->type == 1)
-                {
-                    dz = zf - zi;
-                }
-                else
-                    if(p->type == 2)
-                    {
-                        dz = zf - zi;
-                    }
-            
-            elevate = true;
-            
-            currentZ = zi*9/3-13.5+1.5;
-            
-            while(elevate)
-            {
-                int pos = 0;
-                
-                for(int j = 0; j < boardPieces.size(); j++)
-                {
-                    if((boardPieces[j]->getXPos() == p.x) && (boardPieces[j]->getYPos() == p.y))
-                    {
-                        pos = j;
-                        break;
-                    }
-                }
-                
-                if((elevatePiece == false) || (((currentX < xf*9/3-13.5+1.5) && (dx < 0)) || ((currentX > xf*9/3-13.5+1.5) && (dx > 0))))
-                {
-                    elevate = false;
-                    boardPieces[pos]->animating = false;
-                    currentY = 0;
-                    currentX = 0;
-                }
-                else{
-                    glPushMatrix();
-                    currentX = currentX + (dx/30.0);
-                    currentY = currentY + (dy/30.0);
-                    
-                    boardPieces[pos]->setCurrentX(currentX);
-                    boardPieces[pos]->setCurrentY(currentY);
-                    boardPieces[pos]->animating = true;
-                    if(boardPieces[pos]->exists)
-                    {
-                        boardPieces[pos]->draw();
-                    }
-                    glPopMatrix();
-                }
-                
-                display();
-            }*/
-            
+
+			// animation TODO -> WORK IN PROGRESS
+			/*if(p->type == 0)
+			{
+			dz =  - zi;
+			}
+			else
+			if(p->type == 1)
+			{
+			dz = zf - zi;
+			}
+			else
+			if(p->type == 2)
+			{
+			dz = zf - zi;
+			}
+
+			elevate = true;
+
+			currentZ = zi*9/3-13.5+1.5;
+
+			while(elevate)
+			{
+			int pos = 0;
+
+			for(int j = 0; j < boardPieces.size(); j++)
+			{
+			if((boardPieces[j]->getXPos() == p.x) && (boardPieces[j]->getYPos() == p.y))
+			{
+			pos = j;
+			break;
+			}
+			}
+
+			if((elevatePiece == false) || (((currentX < xf*9/3-13.5+1.5) && (dx < 0)) || ((currentX > xf*9/3-13.5+1.5) && (dx > 0))))
+			{
+			elevate = false;
+			boardPieces[pos]->animating = false;
+			currentY = 0;
+			currentX = 0;
+			}
+			else{
+			glPushMatrix();
+			currentX = currentX + (dx/30.0);
+			currentY = currentY + (dy/30.0);
+
+			boardPieces[pos]->setCurrentX(currentX);
+			boardPieces[pos]->setCurrentY(currentY);
+			boardPieces[pos]->animating = true;
+			if(boardPieces[pos]->exists)
+			{
+			boardPieces[pos]->draw();
+			}
+			glPopMatrix();
+			}
+
+			display();
+			}*/
+
 			p->elevate();
 		}
 	}
@@ -643,27 +657,34 @@ bool GameScene::movePiece(int xi,int yi,int xf,int yf){
 	bool success = false;
 	string newBoard;
 	if(con->play(xi,yi,xf,yf,board,newBoard)){
-		game_ended = isGameFinished();
+		Move m;
+		m.xi = xi;
+		m.xf = xf;
+		m.yi = yi;
+		m.yf = yf;
+		m.selected = selected_piece;
+		if(!movie) moves.push_back(m);
+		if(!movie) game_ended = isGameFinished();
 		success = true;
-        
+
 		Pair p(xi,yi);
 		Pair pf(xf,yf);
-        
-        // animation
-        dx = xf - xi;
-        dy = yf - yi;
-        
-        animatePiece = true;
-        
-        currentX = xi*9/3-13.5+1.5;
-        currentY = yi*9/3-13.5+1.5;
-        
-        while(animatePiece)
-        {
-            pieceAnimation(xi, yi, xf, yf, dx, dy);
-            display();
-        }
-        
+
+		// animation
+		dx = xf - xi;
+		dy = yf - yi;
+
+		animatePiece = true;
+
+		currentX = xi*9/3-13.5+1.5;
+		currentY = yi*9/3-13.5+1.5;
+
+		while(animatePiece)
+		{
+			pieceAnimation(xi, yi, xf, yf, dx, dy);
+			display();
+		}
+
 		int pos = positions[p];
 		positions.erase(p);
 		positions[pf] = pos;
@@ -706,6 +727,7 @@ void GameScene::changePlayer(){
 	}else{
 		turn = 'm';
 	}
+	elapse_time = 0;
 }
 
 string replace(string data){
@@ -775,15 +797,15 @@ void GameScene::undo()
 {
 	// TODO
 	strcpy(message,"Cheater...");
-    
-    message[0] = 'C';
-    message[1] = 'h';
-    message[2] = 'e';
-    message[3] = 'a';
-    message[4] = 't';
-    message[5] = 'e';
-    message[6] = 'r';
-    
+
+	message[0] = 'C';
+	message[1] = 'h';
+	message[2] = 'e';
+	message[3] = 'a';
+	message[4] = 't';
+	message[5] = 'e';
+	message[6] = 'r';
+
 	if(game_states->size()==0) return;
 	board = game_states->top();
 	game_states->pop();
@@ -794,22 +816,20 @@ void GameScene::undo()
 void GameScene::playMovie()
 {
 	// TODO
-    
-    /*FAZER ISTO PARA TODOS OS PARES DE PEÇAS QUE SÃO JOGADAS
-     
-     dx = xf - xi;
-     dy = yf - yi;
-     
-     animatePiece = true;
-     
-     currentX = xi*9/3-13.5+1.5;
-     currentY = yi*9/3-13.5+1.5;
-     
-     while(animatePiece)
-     {
-     pieceAnimation(xi, yi, xf, yf, dx, dy); // xi, yi, xf, yf are coordinates of the board, as in [0,8]
-     display();
-     }*/
+
+	if(game_ended){
+		game_states->push(board);
+		pause = movie = true;
+		//invert stack
+		while(game_states->size()>0){
+			movie_boards->push(game_states->top());
+			game_states->pop();
+		}
+		//make pieces visible
+		for(Piece *p : boardPieces){
+			p->exists = true;
+		}
+	}
 }
 
 void GameScene::changeAmbient(int ambientID)
@@ -819,34 +839,34 @@ void GameScene::changeAmbient(int ambientID)
 
 void GameScene::changeGameMode(int modeID)
 {
-    //game_states->empty();
+	//game_states->empty();
 	//initBoard();
-    
+
 	switch(modeID){
-        case pvp:
-            gm = pvp;
-            break;
-        case pvm:
-            gm = pvm;
-            break;
-        case pvs:
-            gm = pvs;
-            break;
+	case pvp:
+		gm = pvp;
+		break;
+	case pvm:
+		gm = pvm;
+		break;
+	case pvs:
+		gm = pvs;
+		break;
 	}
 }
 
 void GameScene::changeCamera(int viewID)
 {
 	activeCamera = defaultCamera;
-    
+
 	if(viewID == 1)
 	{
 		activeCamera->setX(-0.5);
 		activeCamera->setY(-0.5);
 		activeCamera->setZ(-0.5);
 		activeCamera->setRotation(1, 360);
-        glMatrixMode(GL_PROJECTION);
-        activeCamera->applyView();
+		glMatrixMode(GL_PROJECTION);
+		activeCamera->applyView();
 	}
 	else
 		if(viewID == 2)
@@ -858,29 +878,30 @@ void GameScene::changeCamera(int viewID)
 			//activeCamera->updateProjectionMatrix(10, 10);
 			//activeCamera->applyView();
 			//CGFscene::display();
-            
-            
-            
-            // Clear image and depth buffer everytime we update the scene
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluPerspective(0, 1.0, 0.0, 20);
-            
-            gluLookAt(0, -10, 0, 0, 0, 0, 0.0, 1.0, 0.0);
-            
-            //activeCamera->applyView();
-            
-            // Initialize Model-View matrix as identity
-            //glMatrixMode(GL_MODELVIEW);
-            //glLoadIdentity();
+
+
+
+			// Clear image and depth buffer everytime we update the scene
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluPerspective(0, 1.0, 0.0, 20);
+
+			gluLookAt(0, -10, 0, 0, 0, 0, 0.0, 1.0, 0.0);
+
+			//activeCamera->applyView();
+
+			// Initialize Model-View matrix as identity
+			//glMatrixMode(GL_MODELVIEW);
+			//glLoadIdentity();
 		}
-    
+
 }
 
 void GameScene::changeTimeToPlay(int timeID)
 {
 	// TODO
+	play_time = timeID * 1000;
 }
 
 void GameScene::redrawBoard(){
@@ -920,7 +941,7 @@ void GameScene::redrawBoard(){
 			p->king = true;
 			p->player='s';
 		}
-        
+
 		if((board[i] == ',' || i == board.length()-1)){
 			// Set Piece position
 			if(p){
@@ -958,16 +979,39 @@ void GameScene::dumpPositions(){
 	cout << endl;
 	for(int i = 0; i < boardPieces.size(); ++i){
 		cout << "Id: " << boardPieces[i]->id 
-        << " x: " << boardPieces[i]->xPos
-        << " y: " << boardPieces[i]->yPos
-        << " " << i
-        << endl;
+			<< " x: " << boardPieces[i]->xPos
+			<< " y: " << boardPieces[i]->yPos
+			<< " " << i
+			<< endl;
 	}
 	for(Iter i = positions.begin() ; i != positions.end() ; i++){
 		cout << "x: " << i->first.x
-        << " y: " << i->first.y
-        << " pos: " << i->second
-        << endl;
+			<< " y: " << i->first.y
+			<< " pos: " << i->second
+			<< endl;
+	}
+}
+
+void GameScene::update(unsigned long millis){
+	if(!pause) elapse_time += 100;
+	if(elapse_time > 0 && elapse_time % play_time == 0){
+		//play time over
+		elapse_time = 0;
+		changePlayer();
+		aiMove();
+	}
+	if(movie) 
+		movie_step -= 100;
+	if(movie && !movie_step && moves.size() > 0 && movie_boards->size()>0){
+		movie_step = 1000;
+		board = movie_boards->top();
+		if(time++==0) redrawBoard();
+		movie_boards->pop();
+		Move m = moves.front();
+		selected_piece = m.selected;
+		movePiece(m.xi,m.yi,m.xf,m.yf);
+		moves.erase(moves.begin());
+
 	}
 }
 
