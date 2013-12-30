@@ -10,6 +10,7 @@
 #include "GameScene.h"
 
 #include <math.h>
+#include <cstring>
 
 using namespace std;
 
@@ -24,9 +25,6 @@ class PrologBadResponse{};
 
 void GameScene::init()
 {
-
-
-	//DEBUG -- TODO change this var on new game options
 	movie_step = 1000;
 	elapse_time = 0;
 	play_time = 20000;
@@ -37,8 +35,8 @@ void GameScene::init()
 	movie = false;
 	movie_boards = new stack<string>;
 	time = 0;
-
 	game_states = new stack<string>;
+    playing = false;
 
 	// Apply transformations corresponding to the camera position relative to the origin
 
@@ -88,6 +86,7 @@ void GameScene::init()
 	animatePiece = false;
 	currentX = 0;
 	currentY = 0;
+    currentZ = 0;
 
 	/* Ambients */
 
@@ -199,7 +198,6 @@ void GameScene::init()
 
 	/* Cameras */
 	defaultCamera = activeCamera;
-	currentCamera = activeCamera;
 
 	// Create board tiles
 	for (int y = 0; y < NUM_ROWS; y++)
@@ -241,10 +239,10 @@ void GameScene::display()
 	activeCamera->applyView();
 
 	// Draw (and update) lights
-	/*light0->draw();
+	light0->draw();
 	light1->draw();
 	light2->draw();
-	light3->draw();*/
+	light3->draw();
 
 	// Draw axis
 	//axis.draw();
@@ -362,28 +360,6 @@ void GameScene::display()
 
 	}
 
-
-	// draw auxiliary board
-	int c = 0;
-	for(int k = 0; k < boardPieces.size(); k++)
-	{
-		Piece* currentPiece = boardPieces[k];
-
-		if(!currentPiece->exists)
-		{
-			/*glPushMatrix();
-			glTranslated(5, 5, 5); // TODO -> aqui tem q ter uma variável para a peça aparecer ao lado da anterior .. ou seja .. o x ou z tem q aumentar para elas aparecerem umas ao lado das outras
-
-			currentPiece->setXPos(0);
-			currentPiece->setYPos(0);
-			glTranslated(3*c, 0, 7);
-			drawPiece(k);
-			drawBoardTile(k);
-			glPopMatrix();
-			c++;*/
-		}
-	}
-
 	glPopMatrix();
 
 	// ---- END feature demos
@@ -410,22 +386,14 @@ void GameScene::pieceAnimation(int xi, int yi, int xf, int yf, int dx, int dy)
 	{
 		animatePiece = false;
 		boardPieces[pos]->animating = false;
-		currentY = 0;
-		currentX = 0;
 	}
 	else{
-		glPushMatrix();
 		currentX = currentX + (dx/30.0);
 		currentY = currentY + (dy/30.0);
 
 		boardPieces[pos]->setCurrentX(currentX);
 		boardPieces[pos]->setCurrentY(currentY);
 		boardPieces[pos]->animating = true;
-		if(boardPieces[pos]->exists)
-		{
-			boardPieces[pos]->draw();
-		}
-		glPopMatrix();
 	}
 }
 
@@ -444,10 +412,7 @@ GameScene::~GameScene()
 
 void GameScene::initBoard(){
 	board = con->get_init_board();
-	//game_states->push(board);
 	redrawBoard();
-
-	
 }
 
 void GameScene::aiMove(){
@@ -496,7 +461,11 @@ void GameScene::aiMove(){
 		while(animatePiece)
 		{
 			pieceAnimation(xi, yi, xf, yf, dx, dy);
-			display();
+			
+            if(animatePiece != false)
+            {
+            display();
+            }
 		}
 
 		int pos = positions[p];
@@ -558,14 +527,49 @@ void GameScene::drawPiece(int i)
 			{
 				currentAmbient->mApp->apply();
 			}
-			boardPieces[i]->draw();
+			
+    boardPieces[i]->draw();
 
 }
 
 bool GameScene::lowerPiece(){
 	if(selected_piece){
+        
+        // animation
+        if(selected_piece->type == 0)
+        {
+			dz = selected_piece->elevation;
+        }
+        else
+			{
+                dz = selected_piece->elevation;
+			}
+        
+        currentZ = dz;
+        elevate = true;
+        
+        while(elevate)
+        {
+            
+			if((elevate == false) || (currentZ < 0.0))
+			{
+                elevate = false;
+                selected_piece->elevating = false;
+                currentZ = 0.0;
+			}
+			else{
+                currentZ = currentZ - (dz/10.0);
+                
+                selected_piece->setCurrentZ(currentZ);
+                selected_piece->elevating = true;
+                
+                if(elevate != false)
+                {
+                display();
+                }
+			}
+        }
 		selected_piece->lower();
-		selected_piece = NULL;
 		return true;
 	}
 	return false;
@@ -584,64 +588,45 @@ bool GameScene::elevatePiece(int x,int y){
 		if(p && p->player == turn){
 			res = true;
 			selected_piece = p;
-
-			// animation TODO -> WORK IN PROGRESS
-			/*if(p->type == 0)
+            dz = 0.0;
+			// animation
+			if(p->type == 0)
 			{
-			dz =  - zi;
+			dz = 1.0;
 			}
 			else
 			if(p->type == 1)
 			{
-			dz = zf - zi;
+			dz = p->radius + p->elevation;
 			}
 			else
 			if(p->type == 2)
 			{
-			dz = zf - zi;
+                dz = p->elevation + 0.5;
 			}
 
 			elevate = true;
 
-			currentZ = zi*9/3-13.5+1.5;
+			currentZ = 0.0;
 
 			while(elevate)
 			{
-			int pos = 0;
 
-			for(int j = 0; j < boardPieces.size(); j++)
-			{
-			if((boardPieces[j]->getXPos() == p.x) && (boardPieces[j]->getYPos() == p.y))
-			{
-			pos = j;
-			break;
-			}
-			}
-
-			if((elevatePiece == false) || (((currentX < xf*9/3-13.5+1.5) && (dx < 0)) || ((currentX > xf*9/3-13.5+1.5) && (dx > 0))))
+			if((elevate == false) || (currentZ > dz))
 			{
 			elevate = false;
-			boardPieces[pos]->animating = false;
-			currentY = 0;
-			currentX = 0;
+			boardPieces[pos]->elevating = false;
+			currentZ = 0.0;
 			}
 			else{
-			glPushMatrix();
-			currentX = currentX + (dx/30.0);
-			currentY = currentY + (dy/30.0);
+			currentZ = currentZ + (dz/10.0);
 
-			boardPieces[pos]->setCurrentX(currentX);
-			boardPieces[pos]->setCurrentY(currentY);
-			boardPieces[pos]->animating = true;
-			if(boardPieces[pos]->exists)
-			{
-			boardPieces[pos]->draw();
-			}
-			glPopMatrix();
-			}
+			boardPieces[pos]->setCurrentZ(currentZ);
+			boardPieces[pos]->elevating = true;
 
 			display();
-			}*/
+			}
+            }
 
 			p->elevate();
 		}
@@ -686,16 +671,20 @@ bool GameScene::movePiece(int xi,int yi,int xf,int yf){
 		while(animatePiece)
 		{
 			pieceAnimation(xi, yi, xf, yf, dx, dy);
-			display();
+			
+            if(animatePiece != false)
+            {
+            display();
+            }
 		}
-
+        
 		int pos = positions[p];
 		positions.erase(p);
 		positions[pf] = pos;
 		selected_piece->xPos = xf;
 		selected_piece->yPos = yf;
 		//printf("%i,%i",selected_piece->xPos,selected_piece->yPos);
-		selected_piece->lower();
+        lowerPiece();
 		selected_piece = NULL;
 		game_states->push(board);
 		board = newBoard;
@@ -709,6 +698,10 @@ bool GameScene::movePiece(int xi,int yi,int xf,int yf){
 }
 
 bool GameScene::isGameFinished(){
+    
+     playing = false;
+     strcpy(message,"Game Over          ");
+    
 	return con->gameEnd(board);
 }
 
@@ -727,7 +720,9 @@ void GameScene::check_pieces(){
 }
 
 void GameScene::changePlayer(){
-	if(turn == 'm'){
+	
+    playing = true;
+    if(turn == 'm'){
 		turn = 's';
 	}else{
 		turn = 'm';
@@ -802,7 +797,6 @@ void GameScene::undo()
 {
 	pause = game_ended = false;
 
-	// TODO
 	strcpy(message,"Cheater...");
 
 	message[0] = 'C';
@@ -822,8 +816,6 @@ void GameScene::undo()
 
 void GameScene::playMovie()
 {
-	// TODO
-
 	if(game_ended){
 		game_states->push(board);
 		pause = movie = true;
@@ -846,9 +838,8 @@ void GameScene::changeAmbient(int ambientID)
 
 void GameScene::changeGameMode(int modeID)
 {
-	//game_states->empty();
-	//initBoard();
-
+    initBoard();
+    
 	switch(modeID){
 	case pvp:
 		gm = pvp;
@@ -864,50 +855,32 @@ void GameScene::changeGameMode(int modeID)
 
 void GameScene::changeCamera(int viewID)
 {
-	activeCamera = defaultCamera;
-
-	if(viewID == 1)
+       initCameras();
+       activeCamera->applyView();
+       display();
+    
+    if(viewID == 2)
 	{
-		activeCamera->setX(-0.5);
+        activeCamera->setX(-0.5);
 		activeCamera->setY(-0.5);
-		activeCamera->setZ(-0.5);
-		activeCamera->setRotation(1, 360);
-		glMatrixMode(GL_PROJECTION);
+        activeCamera->setZ(-0.5);
 		activeCamera->applyView();
+        display();
 	}
 	else
-		if(viewID == 2)
+		if(viewID == 3)
 		{
-			//activeCamera->setX(0);
-			//activeCamera->setY(-10);
-			//activeCamera->setZ(0);
-			//activeCamera->setRotation(1, 360);
-			//activeCamera->updateProjectionMatrix(10, 10);
-			//activeCamera->applyView();
-			//CGFscene::display();
-
-
-
-			// Clear image and depth buffer everytime we update the scene
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluPerspective(0, 1.0, 0.0, 20);
-
-			gluLookAt(0, -10, 0, 0, 0, 0, 0.0, 1.0, 0.0);
-
-			//activeCamera->applyView();
-
-			// Initialize Model-View matrix as identity
-			//glMatrixMode(GL_MODELVIEW);
-			//glLoadIdentity();
+			activeCamera->setX(-8.0);
+			activeCamera->setY(-3.0);
+			activeCamera->setZ(-8.0);
+			activeCamera->applyView();
+			display();
 		}
 
 }
 
 void GameScene::changeTimeToPlay(int timeID)
 {
-	// TODO
 	play_time = timeID * 1000;
 }
 
@@ -963,6 +936,8 @@ void GameScene::redrawBoard(){
 			}
 			x++;
 		}
+        
+        playing = true;
 	}
 }
 
@@ -1020,6 +995,7 @@ void GameScene::update(unsigned long millis){
 		moves.erase(moves.begin());
 
 	}
+    
 }
 
 void GameScene::restart(){

@@ -21,8 +21,10 @@ Piece::Piece():CGFobject(),exists(true){
 	this->id = new char[4];
 	this->type = 0;
 	this->animating = false;
+    this->elevating = false;
 	this->currentX = 0;
 	this->currentY = 0;
+    this->currentZ = 0;
 	
 	firstC = new Cylinder("",this->radius,this->radius_2,this->height,this->slices,this->stacks);
 	secondC = new Cylinder("",this->radius_2,this->radius_2,this->height,this->slices,this->stacks);
@@ -50,8 +52,10 @@ Piece::Piece(int slices,int stacks,float radius):CGFobject(),exists(true){
 	this->id = new char[4];
 	this->type = 0;
 	this->animating = false;
+    this->elevating = false;
 	this->currentX = 0;
 	this->currentY = 0;
+    this->currentZ = 0;
 	
 	firstC = new Cylinder("",this->radius,this->radius_2,this->height,this->slices,this->stacks);
 	secondC = new Cylinder("",this->radius_2,this->radius_2,this->height,this->slices,this->stacks);
@@ -96,10 +100,18 @@ void Piece::draw(){
 		else{
 			glTranslatef(xPos*9/3-13.5+1.5,0,yPos*9/3-13.5+1.5);
 		}
+        
 		glRotatef(90,1,0,0);
 		glRotatef(180,0,1,0);
-		glTranslatef(0,0,elevation); //+y is +z
-		
+		if(elevating)
+        {
+            glTranslatef(0,0,currentZ);
+        }
+        else
+        {
+            glTranslatef(0,0,elevation); //+y is +z
+        }
+        
 		glPushMatrix();{
 			
 			firstC->draw();
@@ -127,8 +139,17 @@ void Piece::draw(){
 		}
 		glRotatef(90,1,0,0);
 		glRotatef(180,0,1,0);
-		glTranslatef(0,0,elevation + radius); //+y is +z
 		
+        if(elevating)
+        {
+            glTranslatef(0,0,currentZ);
+        }
+        else
+        {
+        glTranslatef(0,0,elevation); //+y is +z
+		}
+        glTranslatef(0,0,radius); //+y is +z
+        
 		glPushMatrix();
 		bigsph->draw();
 		glPopMatrix();
@@ -152,8 +173,17 @@ void Piece::draw(){
 		}
 		glRotatef(90,1,0,0);
 		glRotatef(180,0,1,0);
-		glTranslatef(0,0,elevation + 0.5); //+y is +z
 		
+        if(elevating)
+        {
+            glTranslatef(0,0,currentZ);
+        }
+        else
+        {
+        glTranslatef(0,0,elevation); //+y is +z
+		}
+        
+        glTranslatef(0,0,0.5);
 		glPushMatrix();
 		tor->draw();
 		glPopMatrix();
@@ -177,13 +207,13 @@ void Piece::drawBase(){
 			for(int i = 0; i < this->slices ;i++){
 	
 				angle += angle_step;
-								x = cos(angle*_RAD_TO_DEG)*this->radius;
-								z = sin(angle*_RAD_TO_DEG)*this->radius;
-								glVertex3f(x,0,z);
-								x = x * this->radius_2 + this->radius_2;
-								z = z * this->radius_2 + this->radius_2;
-
-								glTexCoord2f(x, z);
+                glVertex2f(x, z);
+                x = cos(angle*_RAD_TO_DEG)*this->radius_2;
+                z = sin(angle*_RAD_TO_DEG)*this->radius_2;
+                x = x * this->radius_2 + this->radius_2;
+                z = z * this->radius_2 + this->radius_2;
+                
+                glTexCoord2f(x, z);
 			}
 		}glEnd();
 		
@@ -219,4 +249,9 @@ void Piece::setCurrentX(double currentX)
 void Piece::setCurrentY(double currentY)
 {
 	this->currentY = currentY;
+}
+
+void Piece::setCurrentZ(double currentZ)
+{
+	this->currentZ = currentZ;
 }

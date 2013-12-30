@@ -8,7 +8,6 @@
 #include "PConnect.h"
 #include "Piece.h"
 #include "Ambient.h"
-//#include "Rect.h"
 #include <string.h>
 #include <stack>
 #include <vector>
@@ -66,8 +65,9 @@ public:
 
 	/* Animation */
 	bool animatePiece;
+    bool elevate;
 	void pieceAnimation(int xi, int yi, int xf, int yf, int dx, int dy);
-	double dx, dy, currentX, currentY;
+	double dx, dy, dz, currentX, currentY, currentZ;
 
 	/* Ambient */
 	vector<Ambient*> ambients;
@@ -90,8 +90,9 @@ public:
 	vector<Move> moves;
 	vector<BoardTile*> boardTiles;
 	CGFcamera* defaultCamera;
-	CGFcamera* currentCamera;
 	game_mode gm; //game mode
+    bool playing;
+    char turn; // current player playing the game
 	int play_time;
 	unsigned long elapse_time;
 	unsigned long movie_step;
@@ -135,8 +136,6 @@ private:
 	Called after a sucessfull move, checks if piece was remove (on plog) and if so remove it from board.
 	*/
 	void check_pieces();
-
-	char turn; // current player playing the game
 
 };
 

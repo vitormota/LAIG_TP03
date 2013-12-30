@@ -33,6 +33,7 @@ public:
 	void setYPos(int y);
 	void setCurrentX(double currentX);
 	void setCurrentY(double currentY);
+    void setCurrentZ(double currentZ);
 	int getXPos();
 	int getYPos();
 	
@@ -46,6 +47,7 @@ public:
 	int type;
 	bool king;
 	bool animating;
+    bool elevating;
 	char player;
 	bool exists;
 	bool captured;
@@ -56,14 +58,14 @@ public:
 	Primitive* sph;
 	Primitive* bigsph;
 	Primitive* tor;
+    float elevation;
 	
 private:
-	double currentX, currentY;
+	double currentX, currentY, currentZ;
 	
 	
 protected:
 	void drawBase();
-	float elevation;
 	
 };
 #endif

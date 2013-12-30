@@ -26,6 +26,8 @@ class GameInterface: public CGFinterface {
 	
 		int ambientID, modeID, viewID, timeID, diffID;
 		char currentMessage[20];
+        GLUI_Panel *msgPanel;
+        GLUI_StaticText *message;
 
 		GameScene *gs;
 };

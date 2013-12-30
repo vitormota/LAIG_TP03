@@ -35,7 +35,7 @@ using std::vector;
         float getTexlength_s();
         float getTexlength_t();
 		virtual void draw(){}
-        float *get_normal_newell(float **vertices, int size);
+        double *get_normal_newell(double **vertices, int size);
         float *getSurfaceNormalTriangle (const float x[], const float y[], const float z[], int numPontos);
 	};
 
@@ -44,9 +44,9 @@ using std::vector;
 
 	private:
 		float x1, y1, x2, y2;
-        float **verticesRectangle; // vertices of the rectangle primitive
-        float *normalRectangle; // normal of the rectangle primitive
-        float height,length;
+        double **verticesRectangle; // vertices of the rectangle primitive
+        double *normalRectangle; // normal of the rectangle primitive
+        double height,length;
 
 	public:
 		Rectangle(string id,float x1, float y1, float x2, float y2);

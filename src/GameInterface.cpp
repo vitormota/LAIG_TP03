@@ -70,13 +70,9 @@ void GameInterface::initGUI()
 	addColumnToPanel(mainPanel);
 	
 	// Show Message
-	GLUI_Panel *msgPanel= addPanelToPanel(mainPanel, "Message", GLUI_PANEL_EMBOSSED);
+	msgPanel= addPanelToPanel(mainPanel, "Message", GLUI_PANEL_EMBOSSED);
 	msgPanel->set_alignment(GLUI_ALIGN_CENTER);
-	GLUI_StaticText *text = addStaticTextToPanel(msgPanel, currentMessage);
-	//GLUI_TextBox(msgPanel, ((GameScene *) gs)->getMessage());
-	//text->set_text("text");
-	//GLUI_StaticText *text = add_statictext_to_panel(msgPanel, ((GameScene *) gs)->getMessage());
-	//GLUI_StaticText *text= GLUI::add_statictext_to_panel(msgPanel,((GameScene *) gs)->getMessage());
+	message = addStaticTextToPanel(msgPanel, ((GameScene*) gs)->getMessage());
 	
 	// Start
 	GLUI_Panel *startPanel= addPanelToPanel(mainPanel, "New Game", GLUI_PANEL_EMBOSSED);
@@ -134,15 +130,8 @@ void GameInterface::initGUI()
 	
 }
 
-void GameInterface::update(unsigned long time)
-{
-	memcpy(currentMessage, ((GameScene *) gs)->getMessage(), 20);
-
-}
-
 void GameInterface::processGUI(GLUI_Control *ctrl)
-{
-	
+{	
 	printf ("GUI control id: %d\n  ",ctrl->user_id);
 	switch (ctrl->user_id)
 	{
@@ -180,18 +169,21 @@ void GameInterface::processGUI(GLUI_Control *ctrl)
 			gs->restart();
 			gs->pause = false;
 			gs->aiMove();
+            message->set_text("Welcome");
 			break;
 		};
 			
 		case 8:
 		{
 			((GameScene *) gs)->undo();
+            message->set_text("Cheater...");
 			break;
 		};
 			
 		case 9:
 		{
 			((GameScene *) gs)->playMovie();
+            message->set_text("Movie Playing");
 			break;
 		};
 			
@@ -215,8 +207,23 @@ void GameInterface::processGUI(GLUI_Control *ctrl)
 			
 		case 13:
 		{
-			((GameScene *) gs)->changeGameMode(modeID);
-			//gs->pause = true;
+            ((GameScene *) gs)->changeGameMode(modeID);
+			
+            if(modeID == 0)
+            {
+                message->set_text("PvP mode");
+            }
+            else
+                if(modeID == 1)
+                {
+                    message->set_text("PvM mode");
+                }
+            else if(modeID == 2)
+            {
+                message->set_text("PvS mode");
+            }
+            
+            gs->restart();
 			break;
 		};
 			
@@ -227,7 +234,8 @@ void GameInterface::processGUI(GLUI_Control *ctrl)
 
 void GameInterface::processMouse(int button, int state, int x, int y)
 {
-	CGFinterface::processMouse(button,state, x, y);
+    
+    CGFinterface::processMouse(button,state, x, y);
 	
 	// do picking on mouse press (GLUT_DOWN)
 	// this could be more elaborate, e.g. only performing picking when there is a click (DOWN followed by UP) on the same place
@@ -311,6 +319,7 @@ void GameInterface::processHits (GLint hits, GLuint buffer[])
 	if (selected!=NULL)
 	{
 		if(gs->game_ended){
+            message->set_text("Game Over");
 			return;
 		}
 		// this should be replaced by code handling the picked object's ID's (stored in "selected"),
@@ -324,9 +333,23 @@ void GameInterface::processHits (GLint hits, GLuint buffer[])
 				//sucess found piece at location
 				pos1 = true;
 				printf("Piece elevated.\n");
+                if(((GameScene*) gs)->playing)
+                {
+                    
+                    if((((GameScene*) gs)->turn) == 'm')
+                    {
+                        message->set_text("Player M turn");
+                    }
+                    else if((((GameScene*) gs)->turn) == 's')
+                    {
+                        message->set_text("Player S turn");
+                    }
+                    
+                }
 			}else{
 				//no piece there sorry
 				printf("No piece at target location.\n");
+                message->set_text("Invalid Move");
 			}
 		}else if(pos1){
 			x2 = selected[1];
@@ -340,6 +363,18 @@ void GameInterface::processHits (GLint hits, GLuint buffer[])
 					x2 = -1;
 					y1 = -1;
 					y2 = -1;
+                    {
+                        
+                        if((((GameScene*) gs)->turn) == 'm')
+                        {
+                            message->set_text("Player M turn");
+                        }
+                        else if((((GameScene*) gs)->turn) == 's')
+                        {
+                            message->set_text("Player S turn");
+                        }
+                        
+                    }
 				}
 			}else{
 				//piece found on loc 2 so
@@ -349,6 +384,19 @@ void GameInterface::processHits (GLint hits, GLuint buffer[])
 				y1 = y2;
 				x2 = -1;
 				y2 = -1;
+                
+                {
+                    
+                    if((((GameScene*) gs)->turn) == 'm')
+                    {
+                        message->set_text("Player M turn");
+                    }
+                    else if((((GameScene*) gs)->turn) == 's')
+                    {
+                        message->set_text("Player S turn");
+                    }
+                    
+                }
 			}
 			
 			
